@@ -1,11 +1,579 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Layout from "../layouts/Layout.astro"
 ---
 
 <Layout>
-	<Welcome />
+  <script src="@/scripts/economy-simulator"></script>
+
+  <div
+    x-data="app"
+    class="container mx-auto p-4"
+  >
+    <div class="mt-8 rounded-lg border p-4 shadow-md">
+      <h2 class="mb-4 text-xl font-semibold">Explanation</h2>
+      <div class="space-y-2">
+        <p>
+          This simulator models household spending with a focus on basic needs
+          and diminishing returns:
+        </p>
+        <ul class="list-inside list-disc">
+          <li>
+            <strong>Necessity Level (1-10)</strong>: How essential an item is to
+            survival and wellbeing. Housing and food are typically rated 9-10,
+            while entertainment might be 1-3.
+          </li>
+          <li>
+            <strong>Basic Need Amount</strong>: The quantity of a product that a
+            household needs to satisfy their basic requirements.
+          </li>
+          <li>
+            <strong>Diminishing Returns Factor</strong>: After basic needs are
+            met, additional units provide less utility. The factor (0-1)
+            controls how quickly utility diminishes.
+          </li>
+          <li>
+            <strong>Price per Unit</strong>: The cost of one unit of the
+            category.
+          </li>
+          <li>
+            <strong>Utility Factor</strong>: The base usefulness/happiness
+            gained from one unit of this category.
+          </li>
+        </ul>
+        <p class="mt-2">
+          The optimization algorithm prioritizes meeting essential needs first
+          (higher necessity level), then allocates remaining budget to maximize
+          total utility.
+        </p>
+        <p class="mt-2">
+          With this model, a household will always prioritize basic housing even
+          if other items have better utility-to-price ratios, which matches
+          real-world behavior.
+        </p>
+      </div>
+    </div>
+
+    <h1 class="my-6 text-3xl font-bold">Economy Simulator</h1>
+
+    <div class="mb-6 rounded-lg border p-4 shadow-md">
+      <h2 class="mb-4 text-xl font-semibold">Model Settings</h2>
+      <div class="mb-4">
+        <p class="mb-2 text-sm text-gray-600">
+          Use these presets to test different economic models and scenarios.
+        </p>
+
+        <div class="grid grid-cols-2 gap-2 md:grid-cols-4">
+          <button
+            @click="resetToDefault()"
+            class="rounded border border-gray-300 bg-white p-2 text-sm hover:bg-gray-100"
+            title="Reset all categories and settings to their default values"
+          >
+            Reset to Default
+          </button>
+
+          <button
+            @click="applyEqualFactorsModel()"
+            class="rounded border border-gray-300 bg-white p-2 text-sm hover:bg-gray-100"
+            :class="{'bg-blue-100 border-blue-300': modelSettings.equalFactors}"
+            title="Set all utility factors to the same value"
+          >
+            Equal Utility Factors
+          </button>
+
+          <button
+            @click="applyNoDiminishingReturnsModel()"
+            class="rounded border border-gray-300 bg-white p-2 text-sm hover:bg-gray-100"
+            :class="{'bg-blue-100 border-blue-300': modelSettings.noDiminishingReturns}"
+            title="Remove diminishing returns from all categories"
+          >
+            No Diminishing Returns
+          </button>
+
+          <button
+            @click="applyFlatUtilityModel()"
+            class="rounded border border-gray-300 bg-white p-2 text-sm hover:bg-gray-100"
+            :class="{'bg-blue-100 border-blue-300': modelSettings.flatUtility}"
+            title="Set all necessity levels to medium (5)"
+          >
+            Equal Necessity Levels
+          </button>
+        </div>
+
+        <h3 class="mt-4 mb-2 font-semibold">Test Scenarios</h3>
+        <div class="grid grid-cols-2 gap-2 md:grid-cols-4">
+          <button
+            @click="applyHighContrast()"
+            class="rounded border border-gray-300 bg-white p-2 text-sm hover:bg-gray-100"
+            title="Make essentials very necessary (10) and luxuries very optional (1)"
+          >
+            High Contrast Necessities
+          </button>
+
+          <button
+            @click="applyLowBudgetScenario()"
+            class="rounded border border-gray-300 bg-white p-2 text-sm hover:bg-gray-100"
+            title="Set budget to $300 to test scarcity"
+          >
+            Low Budget ($300)
+          </button>
+
+          <button
+            @click="applyHighBudgetScenario()"
+            class="rounded border border-gray-300 bg-white p-2 text-sm hover:bg-gray-100"
+            title="Set budget to $2000 to test abundance"
+          >
+            High Budget ($2000)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+      <div class="rounded-lg border p-4 shadow-md">
+        <h2 class="mb-4 text-xl font-semibold">Household Budget</h2>
+        <div class="mb-4">
+          <label
+            class="mb-2 block"
+            for="income"
+          >
+            Monthly Income: <span x-text="formatCurrency(budget)"></span>
+          </label>
+          <div class="flex items-center space-x-4">
+            <input
+              type="range"
+              id="income-slider"
+              x-model="budget"
+              @input="calculateOptimalSpending()"
+              class="w-full"
+              x-bind:min="minBudget"
+              x-bind:max="maxBudget"
+              x-bind:step="step"
+            />
+            <input
+              type="number"
+              id="income"
+              x-model="budget"
+              @input="calculateOptimalSpending()"
+              class="w-24 rounded border p-2"
+              x-bind:min="minBudget"
+              x-bind:max="maxBudget"
+              x-bind:step="step"
+            />
+          </div>
+          <div class="mt-2 flex justify-between text-xs text-gray-500">
+            <span x-text="formatCurrency(minBudget)"></span>
+            <span
+              x-text="formatCurrency(minBudget + (maxBudget - minBudget) / 5 * 1)"
+            >
+            </span>
+            <span
+              x-text="formatCurrency(minBudget + (maxBudget - minBudget) / 5 * 2)"
+            >
+            </span>
+            <span
+              x-text="formatCurrency(minBudget + (maxBudget - minBudget) / 5 * 3)"
+            >
+            </span>
+            <span
+              x-text="formatCurrency(minBudget + (maxBudget - minBudget) / 5 * 4)"
+            >
+            </span>
+            <span x-text="formatCurrency(maxBudget)"></span>
+          </div>
+          <div class="mt-4 flex space-x-2">
+            <button
+              @click="budget = 1000; calculateOptimalSpending()"
+              class="rounded bg-gray-200 px-2 py-1 text-sm hover:bg-gray-300"
+            >
+              $1K
+            </button>
+            <button
+              @click="budget = 2000; calculateOptimalSpending()"
+              class="rounded bg-gray-200 px-2 py-1 text-sm hover:bg-gray-300"
+            >
+              $2K
+            </button>
+            <button
+              @click="budget = 5000; calculateOptimalSpending()"
+              class="rounded bg-gray-200 px-2 py-1 text-sm hover:bg-gray-300"
+            >
+              $5K
+            </button>
+            <button
+              @click="budget = 10000; calculateOptimalSpending()"
+              class="rounded bg-gray-200 px-2 py-1 text-sm hover:bg-gray-300"
+            >
+              $10K
+            </button>
+          </div>
+        </div>
+
+        <h2 class="mb-4 text-xl font-semibold">Spending Categories</h2>
+        <div class="mb-4">
+          <button
+            @click="addCategory()"
+            class="rounded bg-blue-500 p-2 text-white hover:bg-blue-600"
+          >
+            Add Category
+          </button>
+        </div>
+
+        <div class="space-y-4">
+          <template
+            x-for="(category, index) in categories"
+            :key="index"
+          >
+            <div class="rounded border p-3">
+              <div class="mb-2">
+                <label class="mb-1 block">Name:</label>
+                <input
+                  type="text"
+                  x-model="category.name"
+                  @input="calculateOptimalSpending()"
+                  class="w-full rounded border p-2"
+                />
+              </div>
+              <div class="mb-2">
+                <label class="mb-1 block">Price per Unit:</label>
+                <input
+                  type="number"
+                  x-model="category.price"
+                  @input="calculateOptimalSpending()"
+                  class="w-full rounded border p-2"
+                />
+              </div>
+              <div class="mb-2">
+                <label class="mb-1 block">Utility Factor:</label>
+                <input
+                  type="number"
+                  x-model="category.utilityFactor"
+                  @input="calculateOptimalSpending()"
+                  class="w-full rounded border p-2"
+                  step="0.1"
+                />
+              </div>
+              <div class="mb-2">
+                <label class="mb-1 block">Basic Need Amount:</label>
+                <input
+                  type="number"
+                  x-model="category.basicNeedAmount"
+                  @input="calculateOptimalSpending()"
+                  class="w-full rounded border p-2"
+                  min="0"
+                  title="The minimum quantity needed to satisfy basic needs"
+                />
+              </div>
+              <div class="mb-2">
+                <label class="mb-1 block">Necessity Level (1-10):</label>
+                <input
+                  type="number"
+                  x-model="category.necessityLevel"
+                  @input="calculateOptimalSpending()"
+                  class="w-full rounded border p-2"
+                  min="1"
+                  max="10"
+                  step="1"
+                  title="How essential this category is (10 = absolute necessity like shelter, 1 = pure luxury)"
+                />
+                <span
+                  :class="getNecessityLevelColor(category.necessityLevel)"
+                  class="text-sm"
+                  x-text="getNecessityLevelLabel(category.necessityLevel)"
+                >
+                </span>
+              </div>
+              <div class="mb-2">
+                <label class="mb-1 block">
+                  Diminishing Returns Factor (0-1):
+                </label>
+                <input
+                  type="number"
+                  x-model="category.diminishingFactor"
+                  @input="calculateOptimalSpending()"
+                  class="w-full rounded border p-2"
+                  step="0.1"
+                  min="0"
+                  max="1"
+                  title="How quickly utility diminishes after basic needs are met (0 = rapid diminishing, 1 = slow diminishing)"
+                />
+              </div>
+              <button
+                @click="removeCategory(index)"
+                class="rounded bg-red-500 p-1 text-white hover:bg-red-600"
+              >
+                Remove
+              </button>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <div class="rounded-lg border p-4 shadow-md">
+        <h2 class="mb-4 text-xl font-semibold">Optimization Results</h2>
+        <div class="mb-6">
+          <h3 class="mb-2 font-semibold">Budget Allocation</h3>
+          <p class="mb-3 text-sm text-gray-600">
+            Items are sorted by necessity level (highest to lowest). The colored
+            dots match their corresponding pie chart segments.
+          </p>
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse">
+              <thead>
+                <tr class="bg-gray-100">
+                  <th class="border p-2 text-left">Category</th>
+                  <th class="border p-2 text-left">Necessity</th>
+                  <th class="border p-2 text-left">Quantity</th>
+                  <th class="border p-2 text-left">Basic Needs</th>
+                  <th class="border p-2 text-left">Spent</th>
+                  <th class="border p-2 text-left">Utility</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template
+                  x-for="(allocation, index) in allocations"
+                  :key="index"
+                >
+                  <tr>
+                    <td class="border p-2">
+                      <div class="flex items-center space-x-2">
+                        <div
+                          :style="`background-color: ${getCategoryColor(index)}`"
+                          class="h-3 w-3 flex-shrink-0 rounded-full"
+                        >
+                        </div>
+                        <span x-text="allocation.category.name"></span>
+                      </div>
+                    </td>
+                    <td class="border p-2">
+                      <span
+                        :class="getNecessityLevelColor(allocation.category.necessityLevel)"
+                        x-text="getNecessityLevelLabel(allocation.category.necessityLevel)"
+                      >
+                      </span>
+                    </td>
+                    <td class="border p-2">
+                      <span x-text="allocation.quantity"></span>
+                      <span
+                        x-show="allocation.quantity > allocation.category.basicNeedAmount"
+                      >
+                        (<span
+                          x-text="allocation.quantity - allocation.category.basicNeedAmount"
+                        >
+                        </span> extra)
+                      </span>
+                    </td>
+                    <td class="border p-2">
+                      <div class="h-4 w-full bg-gray-200">
+                        <div
+                          :class="getBasicNeedsSatisfactionColor(calculateBasicNeedsSatisfaction(allocation))"
+                          :style="`width: ${calculateBasicNeedsSatisfaction(allocation)}%`"
+                          class="h-full"
+                        >
+                        </div>
+                      </div>
+                      <span
+                        x-text="`${calculateBasicNeedsSatisfaction(allocation).toFixed(0)}%`"
+                      >
+                      </span>
+                    </td>
+                    <td class="border p-2">
+                      <span x-text="formatCurrency(allocation.spent)"></span>
+                      <span class="text-xs text-gray-500">
+                        (<span
+                          x-text="formatPercentage(allocation.spent, totalSpent)"
+                        >
+                        </span>)
+                      </span>
+                    </td>
+                    <td class="border p-2">
+                      <span x-text="allocation.utility.toFixed(1)"></span>
+                      <span class="text-xs text-gray-500">
+                        (<span
+                          x-text="formatPercentage(allocation.utility, totalUtility)"
+                        >
+                        </span>)
+                      </span>
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+              <tfoot>
+                <tr class="font-semibold">
+                  <td
+                    class="border p-2"
+                    colspan="4"
+                  >
+                    Total
+                  </td>
+                  <td
+                    class="border p-2"
+                    x-text="formatCurrency(totalSpent)"
+                  >
+                  </td>
+                  <td
+                    class="border p-2"
+                    x-text="totalUtility.toFixed(1)"
+                  >
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="mb-4 font-semibold">Visualization</h3>
+          <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+            <!-- Spending Pie Chart -->
+            <div>
+              <h4 class="mb-4 text-center font-medium">
+                Spending Distribution
+              </h4>
+              <div class="flex items-center justify-center">
+                <div class="relative h-64 w-64">
+                  <!-- Pie chart segments -->
+                  <template
+                    x-for="(segment, index) in chartData.spending"
+                    :key="index"
+                  >
+                    <div
+                      class="absolute inset-0 rounded-full"
+                      :style="`
+                        background-image: conic-gradient(
+                          transparent 0% ${segment.startPercent}%, 
+                          ${segment.color} ${segment.startPercent}%, 
+                          ${segment.color} ${segment.endPercent}%, 
+                          transparent ${segment.endPercent}% 100%
+                        );
+                      `"
+                      :title="`${segment.category.name}: ${segment.percent.toFixed(1)}%`"
+                    >
+                    </div>
+                  </template>
+
+                  <!-- Center circle -->
+                  <div
+                    class="absolute top-1/2 left-1/2 flex h-40 w-40 -translate-x-1/2 -translate-y-1/2 transform items-center justify-center rounded-full bg-white"
+                  >
+                    <div class="text-center">
+                      <div
+                        class="text-lg font-bold"
+                        x-text="formatCurrency(totalSpent)"
+                      >
+                      </div>
+                      <div class="text-xs text-gray-500">Total Spent</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Legend -->
+              <div class="mt-4 grid grid-cols-2 gap-2">
+                <template
+                  x-for="(segment, index) in chartData.spending"
+                  :key="index"
+                >
+                  <div class="flex items-center space-x-2 text-sm">
+                    <div
+                      :style="`background-color: ${segment.color}`"
+                      class="h-3 w-3 rounded-full"
+                    >
+                    </div>
+                    <div
+                      class="flex-1 truncate"
+                      x-text="segment.category.name"
+                    >
+                    </div>
+                    <div class="font-semibold">
+                      <span
+                        x-text="formatCurrency(segment.category.price * allocations.find(a => a.category.name === segment.category.name).quantity)"
+                      >
+                      </span>
+                      (<span x-text="`${segment.percent.toFixed(1)}%`"></span>)
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+
+            <!-- Utility Pie Chart -->
+            <div>
+              <h4 class="mb-4 text-center font-medium">Utility Distribution</h4>
+              <div class="flex items-center justify-center">
+                <div class="relative h-64 w-64">
+                  <!-- Pie chart segments -->
+                  <template
+                    x-for="(segment, index) in chartData.utility"
+                    :key="index"
+                  >
+                    <div
+                      class="absolute inset-0 rounded-full"
+                      :style="`
+                        background-image: conic-gradient(
+                          transparent 0% ${segment.startPercent}%, 
+                          ${segment.color} ${segment.startPercent}%, 
+                          ${segment.color} ${segment.endPercent}%, 
+                          transparent ${segment.endPercent}% 100%
+                        );
+                      `"
+                      :title="`${segment.category.name}: ${segment.percent.toFixed(1)}%`"
+                    >
+                    </div>
+                  </template>
+
+                  <!-- Center circle -->
+                  <div
+                    class="absolute top-1/2 left-1/2 flex h-40 w-40 -translate-x-1/2 -translate-y-1/2 transform items-center justify-center rounded-full bg-white"
+                  >
+                    <div class="text-center">
+                      <div
+                        class="text-lg font-bold"
+                        x-text="totalUtility.toFixed(1)"
+                      >
+                      </div>
+                      <div class="text-xs text-gray-500">Total Utility</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Legend -->
+              <div class="mt-4 grid grid-cols-2 gap-2">
+                <template
+                  x-for="(segment, index) in chartData.utility"
+                  :key="index"
+                >
+                  <div class="flex items-center space-x-2 text-sm">
+                    <div
+                      :style="`background-color: ${segment.color}`"
+                      class="h-3 w-3 rounded-full"
+                    >
+                    </div>
+                    <div
+                      class="flex-1 truncate"
+                      x-text="segment.category.name"
+                    >
+                    </div>
+                    <div class="font-semibold">
+                      <span
+                        x-text="allocations.find(a => a.category.name === segment.category.name).utility.toFixed(1)"
+                      >
+                      </span>
+                      (<span x-text="`${segment.percent.toFixed(1)}%`"></span>)
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </div>
+          <div
+            x-show="optimizationMessage"
+            class="mt-4 rounded border border-yellow-300 bg-yellow-100 p-2"
+            x-text="optimizationMessage"
+          >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </Layout>

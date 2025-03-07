@@ -1,48 +1,32 @@
-# Astro Starter Kit: Basics
+# Economy simulator
 
-```sh
-pnpm create astro@latest -- --template basics
-```
+The goal of this project is to test and visualize the spendings of a household.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+The household has a fixed income and can spend it on different categories.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Each category has a different price and a different utility factor - acording to the utility theory.
 
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
+Utility divided by price is representing how much preasure the household have to get product.
 
-## 🚀 Project Structure
+We need to create a function that will calculate the optimal spendings for the household, trying to maximize the utility, and keep the buget.
 
-Inside of your Astro project, you'll see the following folders and files:
+As a challenge, we need to cover scenarios where we don't have enough buget to cover our needs, so we need to find the optimal compromise.
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+# Visualization
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+We need to visualize the spendings and the utility in a graph.
 
-## 🧞 Commands
+We need to see how the utility changes when we change the spendings.
 
-All commands are run from the root of the project, from a terminal:
+Create a set of categories with different utility factors and prices.
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
+Then run the simulation and visualize the results, visualizing how the budget is spent and how the utility is maximized.
 
-## 👀 Want to learn more?
+## Tech stack
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- Astro
+- Alpine.js
+- TailwindCSS
+- TypeScript
+
+Write the Alpine.js stuff mostly in `<script>` as components, not inline. HTML is only for visualizations, not for logic.
