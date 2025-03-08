@@ -377,6 +377,118 @@ import Layout from "../layouts/Layout.astro"
 
       <div class="rounded-lg border p-4 shadow-md">
         <h2 class="mb-4 text-xl font-semibold">Optimization Results</h2>
+
+        <div class="mb-6">
+          <h3 class="mb-2 font-semibold">Budget Allocation</h3>
+          <p class="mb-3 text-sm text-gray-600">
+            Items are sorted by necessity level (highest to lowest). The colored
+            dots match their corresponding pie chart segments.
+          </p>
+          <div class="overflow-x-auto">
+            <table class="w-full table-fixed border-collapse">
+              <colgroup>
+                <col class="w-[200px]">
+                <col class="w-[100px]">
+                <col class="w-[150px]">
+                <col class="w-[100px]">
+                <col class="w-[100px]">
+                <col class="w-[100px]">
+              </colgroup>
+              <thead>
+                <tr class="bg-gray-100">
+                  <th class="border p-2 text-left">Category</th>
+                  <th class="border p-2 text-left">Necessity</th>
+                  <th class="border p-2 text-left ">Quantity</th>
+                  <th class="border p-2 text-left">Basic Needs</th>
+                  <th class="border p-2 text-left">Spent</th>
+                  <th class="border p-2 text-left">Utility</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template
+                  x-for="(allocation, index) in allocations"
+                  :key="index"
+                >
+                  <tr>
+                    <td class="border p-2">
+                      <div class="flex items-center space-x-2">
+                        <div
+                          :style="`background-color: ${getCategoryColor(index)}`"
+                          class="h-3 w-3 flex-shrink-0 rounded-full"
+                        >
+                        </div>
+                        <span x-text="allocation.category.name"></span>
+                      </div>
+                    </td>
+                    <td class="border p-2">
+                      <span
+                        :class="getNecessityLevelColor(allocation.category.necessityLevel)"
+                        x-text="getNecessityLevelLabel(allocation.category.necessityLevel)"
+                      >
+                      </span>
+                    </td>
+                    <td class="border p-2">
+                      <div class="max-w-[180px] overflow-hidden text-ellipsis whitespace-nowrap">
+                        <span x-text="allocation.quantity + ' ' + (allocation.quantity > allocation.category.basicNeedAmount ? `(extra ${allocation.quantity - allocation.category.basicNeedAmount})` : '')"></span>
+                      </div>
+                    </td>
+                    <td class="border p-2">
+                      <div class="h-4 w-full bg-gray-200">
+                        <div
+                          :class="getBasicNeedsSatisfactionColor(calculateBasicNeedsSatisfaction(allocation))"
+                          :style="`width: ${calculateBasicNeedsSatisfaction(allocation)}%`"
+                          class="h-full"
+                        >
+                        </div>
+                      </div>
+                      <span
+                        x-text="`${calculateBasicNeedsSatisfaction(allocation).toFixed(0)}%`"
+                      >
+                      </span>
+                    </td>
+                    <td class="border p-2">
+                      <span x-text="formatCurrency(allocation.spent)"></span>
+                      <span class="text-xs text-gray-500">
+                        (<span
+                          x-text="formatPercentage(allocation.spent, totalSpent)"
+                        >
+                        </span>)
+                      </span>
+                    </td>
+                    <td class="border p-2">
+                      <span x-text="allocation.utility.toFixed(1)"></span>
+                      <span class="text-xs text-gray-500">
+                        (<span
+                          x-text="formatPercentage(allocation.utility, totalUtility)"
+                        >
+                        </span>)
+                      </span>
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+              <tfoot>
+                <tr class="font-semibold">
+                  <td
+                    class="border p-2"
+                    colspan="4"
+                  >
+                    Total
+                  </td>
+                  <td
+                    class="border p-2"
+                    x-text="formatCurrency(totalSpent)"
+                  >
+                  </td>
+                  <td
+                    class="border p-2"
+                    x-text="totalUtility.toFixed(1)"
+                  >
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+        </div>
         <div class="mb-6">
           <h3 class="mb-2 font-semibold">Optimal Spending Results</h3>
           <div class="mt-1 flex justify-between text-sm text-gray-500">
@@ -449,7 +561,7 @@ import Layout from "../layouts/Layout.astro"
               </div>
 
               <!-- Legend -->
-              <div class="mt-4 grid grid-cols-2 gap-2">
+              <div class="mt-4 grid grid-cols- gap-2">
                 <template
                   x-for="(segment, index) in chartData.spending"
                   :key="index"
@@ -519,7 +631,7 @@ import Layout from "../layouts/Layout.astro"
               </div>
 
               <!-- Legend -->
-              <div class="mt-4 grid grid-cols-2 gap-2">
+              <div class="mt-4 grid grid-cols-1 gap-2">
                 <template
                   x-for="(segment, index) in chartData.utility"
                   :key="index"
