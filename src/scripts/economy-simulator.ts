@@ -1,6 +1,5 @@
 import { registerComponent } from "@/scripts/alpine.ts"
 import algorithms, { type AllocationAlgorithm } from "@/scripts/algorithms"
-import { getSpaceGsMock } from "@/scripts/space-gs-importer"
 import { kowalski } from './scenarios/kowalski'
 registerComponent("app", {
   budget: 1000,
@@ -26,7 +25,48 @@ registerComponent("app", {
   },
 
   // Default categories for reset
-  defaultCategories: getSpaceGsMock(),
+  defaultCategories: [
+    {
+      name: "Housing",
+      price: 500,
+      utilityFactor: 5,
+      basicNeedAmount: 1,
+      diminishingFactor: 0.5,
+      necessityLevel: 10, // Highest necessity - shelter
+    },
+    {
+      name: "Food",
+      price: 10,
+      utilityFactor: 5,
+      basicNeedAmount: 20,
+      diminishingFactor: 0.8,
+      necessityLevel: 9, // Very high necessity
+    },
+    {
+      name: "Healthcare",
+      price: 100,
+      utilityFactor: 4,
+      basicNeedAmount: 1,
+      diminishingFactor: 0.7,
+      necessityLevel: 8, // High necessity
+    },
+    {
+      name: "Transportation",
+      price: 50,
+      utilityFactor: 3,
+      basicNeedAmount: 1,
+      diminishingFactor: 0.6,
+      necessityLevel: 6, // Medium-high necessity
+    },
+    {
+      name: "Entertainment",
+      price: 20,
+      utilityFactor: 4,
+      basicNeedAmount: 2,
+      diminishingFactor: 0.9,
+      necessityLevel: 3, // Low necessity (luxury)
+    },
+  ],
 
   // Chart data
   chartData: {
