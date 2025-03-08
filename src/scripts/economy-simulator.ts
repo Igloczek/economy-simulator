@@ -1,6 +1,7 @@
 import { registerComponent } from "@/scripts/alpine.ts"
 import algorithms, { type AllocationAlgorithm } from "@/scripts/algorithms"
-
+import { getSpaceGsMock } from "@/scripts/space-gs-importer"
+import { kowalski } from './scenarios/kowalski'
 registerComponent("app", {
   budget: 1000,
   minBudget: 0,
@@ -25,48 +26,7 @@ registerComponent("app", {
   },
 
   // Default categories for reset
-  defaultCategories: [
-    {
-      name: "Housing",
-      price: 500,
-      utilityFactor: 5,
-      basicNeedAmount: 1,
-      diminishingFactor: 0.5,
-      necessityLevel: 10, // Highest necessity - shelter
-    },
-    {
-      name: "Food",
-      price: 10,
-      utilityFactor: 5,
-      basicNeedAmount: 20,
-      diminishingFactor: 0.8,
-      necessityLevel: 9, // Very high necessity
-    },
-    {
-      name: "Healthcare",
-      price: 100,
-      utilityFactor: 4,
-      basicNeedAmount: 1,
-      diminishingFactor: 0.7,
-      necessityLevel: 8, // High necessity
-    },
-    {
-      name: "Transportation",
-      price: 50,
-      utilityFactor: 3,
-      basicNeedAmount: 1,
-      diminishingFactor: 0.6,
-      necessityLevel: 6, // Medium-high necessity
-    },
-    {
-      name: "Entertainment",
-      price: 20,
-      utilityFactor: 4,
-      basicNeedAmount: 2,
-      diminishingFactor: 0.9,
-      necessityLevel: 3, // Low necessity (luxury)
-    },
-  ],
+  defaultCategories: getSpaceGsMock(),
 
   // Chart data
   chartData: {
@@ -83,6 +43,8 @@ registerComponent("app", {
 
     // Initialize with default categories, and explicitly reset algorithm to the first one
     this.resetToDefault(true)
+
+    this.applyKowalskiScenario()
 
     console.log("Initial algorithm:", this.getCurrentAlgorithm().name)
   },
@@ -183,6 +145,12 @@ registerComponent("app", {
     this.calculateOptimalSpending()
   },
 
+  applyKowalskiScenario() {
+    this.categories = kowalski.categories
+    this.budget = kowalski.budget
+    this.calculateOptimalSpending()
+  },
+
   applyHighContrast() {
     // Create high contrast between necessities
     this.categories.forEach((category) => {
@@ -249,7 +217,7 @@ registerComponent("app", {
     console.log("Using algorithm:", algorithm.name)
 
     // Run the selected algorithm
-    const result = algorithm.calculate(processedCategories, Number(this.budget))
+    const result = algorithm.calculate(processedCategories, Number(this.budget / 30))
 
     this.allocations = result.allocations
     this.totalUtility = result.totalUtility

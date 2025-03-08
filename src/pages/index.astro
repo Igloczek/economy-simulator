@@ -130,6 +130,14 @@ import Layout from "../layouts/Layout.astro"
 
         <h3 class="mt-4 mb-2 font-semibold">Test Scenarios</h3>
         <div class="grid grid-cols-2 gap-2 md:grid-cols-4">
+
+          <button
+          @click="applyKowalskiScenario()"
+          class="rounded border border-gray-300 bg-white p-2 text-sm hover:bg-gray-100"
+          title="Apply Kowalski scenario"
+        >
+          Kowalski Scenario
+        </button>
           <button
             @click="applyHighContrast()"
             class="rounded border border-gray-300 bg-white p-2 text-sm hover:bg-gray-100"
@@ -153,6 +161,7 @@ import Layout from "../layouts/Layout.astro"
           >
             High Budget ($2000)
           </button>
+
         </div>
       </div>
     </div>
@@ -165,7 +174,8 @@ import Layout from "../layouts/Layout.astro"
             class="mb-2 block"
             for="income"
           >
-            Monthly Income: <span x-text="formatCurrency(budget)"></span>
+            Monthly Income: <span x-text="formatCurrency(budget)"></span><br>
+            Daily budget: <span x-text="formatCurrency(budget / 30)"></span>
           </label>
           <div class="flex items-center space-x-4">
             <input
@@ -237,7 +247,7 @@ import Layout from "../layouts/Layout.astro"
           </div>
         </div>
 
-        <h2 class="mb-4 text-xl font-semibold">Spending Categories</h2>
+        <h2 class="mb-4 text-xl font-semibold">Spending Categories (per day)</h2>
         <div class="mb-4">
           <button
             @click="addCategory()"
@@ -315,13 +325,34 @@ import Layout from "../layouts/Layout.astro"
                 class="h-8 w-full rounded border px-2"
                 step="0.1"
               />
-              <input
-                type="number"
-                x-model="category.basicNeedAmount"
-                @input="calculateOptimalSpending()"
-                class="h-8 w-full rounded border px-2"
-                min="0"
-              />
+              <div class="grid grid-rows-[32px_16px]">
+                <input
+                  type="number"
+                  x-model="category.basicNeedAmount"
+                  @input="calculateOptimalSpending()"
+                  class="h-8 w-full rounded border px-2"
+                  min="0"
+                />
+                <span  class="text-xs">
+                  <span
+                 
+                  x-text="category.unit"
+                >
+                </span>
+                <span
+                  x-show="category.unit === 'ml'"
+                  x-text="`(${category.basicNeedAmount / 1000}l)`"
+                >
+                </span>
+                <span
+                  x-show="category.unit === 'g' && category.basicNeedAmount < 50"
+                  x-text="`(${category.basicNeedAmount / 3} teaspoons)`"
+                >
+                </span>
+
+              </span>
+              </div>
+        
               <div class="grid grid-rows-[32px_16px]">
                 <input
                   type="number"
