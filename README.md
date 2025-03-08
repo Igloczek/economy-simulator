@@ -1,32 +1,69 @@
-# Economy simulator
+# Economy Simulator
 
-The goal of this project is to test and visualize the spendings of a household.
+An interactive economic model that simulates household spending decisions based on utility theory, necessity levels, and diminishing returns.
 
-The household has a fixed income and can spend it on different categories.
+## Overview
 
-Each category has a different price and a different utility factor - acording to the utility theory.
+This simulator models how households allocate their budget across different spending categories while attempting to maximize utility. It incorporates several key economic concepts:
 
-Utility divided by price is representing how much preasure the household have to get product.
+- **Necessity Prioritization**: Essential items (like housing and food) are prioritized over luxuries
+- **Basic Needs**: Each category has a minimum amount required for basic wellbeing
+- **Diminishing Returns**: Additional units of a good provide progressively less utility after basic needs are met
+- **Budget Constraints**: The model handles scenarios where budget is insufficient to meet all basic needs
 
-We need to create a function that will calculate the optimal spendings for the household, trying to maximize the utility, and keep the buget.
+## Key Features
 
-As a challenge, we need to cover scenarios where we don't have enough buget to cover our needs, so we need to find the optimal compromise.
+### Economic Model
 
-# Visualization
+- **Necessity Levels (1-10)**: Categories are ranked by importance (10 = absolute necessity like shelter, 1 = pure luxury)
+- **Basic Need Amounts**: Minimum quantity of each category needed for basic wellbeing
+- **Utility Factors**: Base usefulness/happiness gained from one unit of a category
+- **Diminishing Returns Factor (0-1)**: Controls how quickly utility drops after basic needs are met
+- **Price per Unit**: Cost of one unit of the category
 
-We need to visualize the spendings and the utility in a graph.
+### Interactive Controls
 
-We need to see how the utility changes when we change the spendings.
+- **Adjustable Budget**: Test different income levels and see how spending patterns change
+- **Category Management**: Add, remove, and modify spending categories
+- **Model Presets**: Quickly test different economic assumptions:
+  - Equal Utility Factors
+  - No Diminishing Returns
+  - Equal Necessity Levels
+  - High Contrast Necessities
+  - Low/High Budget Scenarios
 
-Create a set of categories with different utility factors and prices.
+### Visualizations
 
-Then run the simulation and visualize the results, visualizing how the budget is spent and how the utility is maximized.
+- **Pie Charts**: Visual representation of spending and utility distribution
+- **Detailed Tables**: Breakdown of allocation, showing quantities, spending and utility for each category
+- **Basic Needs Satisfaction**: Visual indicators showing how well basic needs are being met
+- **Color-coded Elements**: Categories are color-coded consistently across different visualizations
 
-## Tech stack
+## How It Works
 
-- Astro
-- Alpine.js
-- TailwindCSS
-- TypeScript
+1. The algorithm first sorts categories by necessity level (highest first)
+2. It allocates budget to satisfy basic needs of high-necessity items first
+3. If any remaining budget exists, it uses a greedy approach to purchase additional units that maximize marginal utility
 
-Write the Alpine.js stuff mostly in `<script>` as components, not inline. HTML is only for visualizations, not for logic.
+This approach ensures that essential needs like housing and food are always prioritized, which matches real-world household spending behavior, especially in scarce resource scenarios.
+
+## Tech Stack
+
+- **Astro**: Framework for building the application
+- **Alpine.js**: Handles reactivity and UI interactions
+- **TailwindCSS**: Styling and layout
+- **TypeScript**: Type-safe implementation of the economic models
+
+Write the Alpine.js code mostly in `<script>` tags as components, not inline. HTML is only for visualizations, not for logic. This separation keeps the codebase maintainable and follows best practices.
+
+## Usage
+
+The simulator allows you to:
+
+1. Adjust the household's monthly income
+2. Define spending categories with their properties
+3. Visualize how the budget is optimally allocated
+4. Test different economic models and assumptions
+5. Explore scenarios of abundance and scarcity
+
+This tool is valuable for education, economic modeling, and understanding household budget optimization.
