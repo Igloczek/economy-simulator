@@ -257,7 +257,7 @@ import Layout from "../layouts/Layout.astro"
           </button>
         </div>
 
-        <div class="space-y-4">
+        <div class="">
           <!-- Headers row - outside the template -->
           <div class="grid grid-cols-7 gap-4 px-4">
             <div>
@@ -270,7 +270,7 @@ import Layout from "../layouts/Layout.astro"
               </div>
               <div class="text-xs text-gray-500">Cost per item</div>
             </div>
-            <div>
+            <div class="">
               <div class="text-sm font-medium text-gray-600">
                 Utility Factor
               </div>
@@ -303,14 +303,13 @@ import Layout from "../layouts/Layout.astro"
             :key="index"
           >
             <div
-              class="relative grid grid-cols-7 gap-4 rounded border px-3 pt-3 pb-5"
+              class="relative grid grid-cols-7 gap-2 border-b border-gray-200 px-3 pt-2 pb-1"
             >
               <!-- Just inputs in a single row -->
-              <input
-                type="text"
+              <textarea
                 x-model="category.name"
                 @input="calculateOptimalSpending()"
-                class="h-8 w-full rounded border px-2"
+                class=" w-full rounded border px-2 "
               />
               <input
                 type="number"
@@ -318,13 +317,27 @@ import Layout from "../layouts/Layout.astro"
                 @input="calculateOptimalSpending()"
                 class="h-8 w-full rounded border px-2"
               />
-              <input
-                type="number"
-                x-model="category.utilityFactor"
-                @input="calculateOptimalSpending()"
-                class="h-8 w-full rounded border px-2"
-                step="0.1"
-              />
+              <div class="grid grid-rows-[32px_16px] ">
+                <input
+                  type="number"
+                  x-model="category.utilityFactor"
+                  @input="calculateOptimalSpending()"
+                  class="h-8 w-full rounded border px-2 "
+                  step="0.1"
+                />
+                <!--Slider -->
+                <div>
+                  <input
+                    type="range"
+                    x-model="category.utilityFactor"
+                    @input="calculateOptimalSpending()"
+                    class="h-8 w-full rounded border "
+                    step="0.1"
+                    max="10"
+                    min="0.1"
+                  />
+                </div>
+              </div>
               <div class="grid grid-rows-[32px_16px]">
                 <input
                   type="number"
@@ -349,7 +362,21 @@ import Layout from "../layouts/Layout.astro"
                   x-text="`(${category.basicNeedAmount / 3} teaspoons)`"
                 >
                 </span>
-
+                <span
+                  x-show="category.unit === 'cm2'"
+                  x-text="`(${category.basicNeedAmount / 1000}m2)`"
+                >
+                </span>
+                <span
+                  x-show="category.timespan === 'perYear'"
+                  x-text="`(per year)`"
+                >
+                </span>
+                <span
+                  x-show="category.timespan === 'perDecade'"
+                  x-text="`(per decade)`"
+                >
+                </span>
               </span>
               </div>
         
@@ -370,15 +397,26 @@ import Layout from "../layouts/Layout.astro"
                 >
                 </span>
               </div>
-              <input
-                type="number"
-                x-model="category.diminishingFactor"
-                @input="calculateOptimalSpending()"
-                class="h-8 w-full rounded border px-2"
-                step="0.1"
-                min="0"
-                max="1"
-              />
+              <div class="grid grid-rows-[32px_16px]">
+                <input
+                  type="number"
+                  x-model="category.diminishingFactor"
+                  @input="calculateOptimalSpending()"
+                  class="h-8 w-full rounded border px-2"
+                  step="0.1"
+                  min="0"
+                  max="1"
+                />
+                <div>
+                  <input
+                    type="range"
+                    x-model="category.diminishingFactor"
+                    @input="calculateOptimalSpending()"
+                    class="h-8 w-full rounded border "
+                  />
+                </div>
+              </div>
+
               <div class="absolute top-0 right-0 bottom-0">
                 <button
                   @click="removeCategory(index)"

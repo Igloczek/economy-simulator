@@ -4,7 +4,7 @@ import { kowalski } from './scenarios/kowalski'
 registerComponent("app", {
   budget: 1000,
   minBudget: 0,
-  maxBudget: 2000,
+  maxBudget: 50_000,
   step: 10,
   categories: [],
   allocations: [],

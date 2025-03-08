@@ -1,10 +1,33 @@
+const perWeek = 1/7
+const perMonth = 1/30
+const perYear = 1/365
+const perDecade = 1/3650
+
 export const kowalski = {
   // Daily consumption
   categories: [
     {
+      name: "Bread",
+      price: 0.01,
+      utilityFactor: 1,
+      basicNeedAmount: 100,
+      diminishingFactor: 0.5,
+      necessityLevel: 10,
+      unit: "g",
+    },
+    {
+      name: "Dairy",
+      price: 0.001,
+      utilityFactor: 1,
+      basicNeedAmount: 100,
+      diminishingFactor: 0.5,
+      necessityLevel: 10,
+      unit: "g",
+    },
+    {
       name: "Fruits",
-      price: 0.101,
-      utilityFactor: 1000,
+      price: 0.004,
+      utilityFactor: 1,
       basicNeedAmount: 400,
       diminishingFactor: 0.5,
       necessityLevel: 10,
@@ -12,8 +35,8 @@ export const kowalski = {
     },
     {
       name: "Vegetables",
-      price: 0.101,
-      utilityFactor: 1000,
+      price: 0.001,
+      utilityFactor: 1,
       basicNeedAmount: 500,
       diminishingFactor: 0.5,
       necessityLevel: 10,
@@ -21,8 +44,8 @@ export const kowalski = {
     },
     {
       name: "Meat",
-      price: 6,
-      utilityFactor: 1000,
+      price: 0.006,
+      utilityFactor: 1,
       basicNeedAmount: 200,
       diminishingFactor: 0.5,
       necessityLevel: 10,
@@ -30,8 +53,8 @@ export const kowalski = {
     },
     {
       name: "Water",
-      price: 0.009,
-      utilityFactor: 1000,
+      price: 0.000009,
+      utilityFactor: 1,
       basicNeedAmount: 1750,
       diminishingFactor: 0.5,
       necessityLevel: 10,
@@ -39,7 +62,7 @@ export const kowalski = {
     },
     {
       name: "Water (hygiene)",
-      price: 0.009,
+      price: 0.000009,
       utilityFactor: 1,
       basicNeedAmount: 50_000,
       diminishingFactor: 0.5,
@@ -49,7 +72,7 @@ export const kowalski = {
     {
       name: "Oxygen",
       price: 0,
-      utilityFactor: 1000,
+      utilityFactor: 1,
       basicNeedAmount: 550_000,
       diminishingFactor: 0.5,
       necessityLevel: 10,
@@ -58,17 +81,17 @@ export const kowalski = {
     {
       name: "Oxygen (Sports)",
       price: 0,
-      utilityFactor: 1000,
+      utilityFactor: 1,
       basicNeedAmount: 1550_000,
       diminishingFactor: 0.5,
       necessityLevel: 10,
       unit: "ml",
     },
     {
-      name: "Alcohol",
-      price: 0.101,
+      name: "Beer",
+      price: 0.003 * perWeek,
       utilityFactor: 1,
-      basicNeedAmount: 250,
+      basicNeedAmount: 500,
       diminishingFactor: 0.5,
       necessityLevel: 5,
       unit: "ml",
@@ -90,6 +113,33 @@ export const kowalski = {
       diminishingFactor: 0.5,
       necessityLevel: 5,
       unit: "g",
+    },
+    {
+      name: "Salt",
+      price: 0.101,
+      utilityFactor: 1,
+      basicNeedAmount: 3,
+      diminishingFactor: 0.5,
+      necessityLevel: 5,
+      unit: "g",
+    },
+    {
+      name: "Spices",
+      price: 0.101,
+      utilityFactor: 1,
+      basicNeedAmount: 3,
+      diminishingFactor: 0.5,
+      necessityLevel: 5,
+      unit: "g",
+    },
+    {
+      name: "Eggs",
+      price: 1,
+      utilityFactor: 1,
+      basicNeedAmount: 1,
+      diminishingFactor: 0.5,
+      necessityLevel: 8,
+      unit: "units",
     },
     {
       name: "Tea",
@@ -165,21 +215,23 @@ export const kowalski = {
     },
     {
       name: "Furniture",
-      price: 0.101,
+      price: 2500 * perDecade,
       utilityFactor: 1,
-      basicNeedAmount: 0.0000001,
+      basicNeedAmount: 2,
       diminishingFactor: 0.5,
       necessityLevel: 5,
       unit: "unit",
+      timespan: 'perDecade'
     },
     {
       name: "Clothes",
-      price: 0.303,
+      price: 100 * perYear,
       utilityFactor: 1,
-      basicNeedAmount: 0.0001,
+      basicNeedAmount: 2,
       diminishingFactor: 0.5,
       necessityLevel: 5,
       unit: "set",
+      timespan: 'perYear'
     },
     {
       name: "Education",
@@ -192,21 +244,22 @@ export const kowalski = {
     },
     {
       name: "Pharmaceutics",
-      price: 0.4545,
+      price: 50 * perYear,
       utilityFactor: 1,
-      basicNeedAmount: 0.002,
+      basicNeedAmount: 3,
       diminishingFactor: 0.5,
       necessityLevel: 5,
       unit: "packages",
+      timespan: 'perYear'
     },
     {
       name: "Real estate",
-      price: 2.6212000632425925,
+      price: (5000 * perMonth) / 5000,
       utilityFactor: 1,
-      basicNeedAmount: 50,
-      diminishingFactor: 0.5,
-      necessityLevel: 5,
-      unit: "m2",
+      basicNeedAmount: 5000,
+      diminishingFactor: 0.7,
+      necessityLevel: 9,
+      unit: "cm2",
     },
     {
       name: "Brain Interface Chips",
@@ -300,5 +353,5 @@ export const kowalski = {
     },
   ],
   // 5000PLN / 30 days
-  budget: 166,
+  budget: 5000,
 }
