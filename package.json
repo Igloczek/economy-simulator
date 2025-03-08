@@ -6,7 +6,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "create-algorithm": "node scripts/create-algorithm.js"
   },
   "dependencies": {
     "@astrojs/vercel": "^8.1.1",

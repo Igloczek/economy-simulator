@@ -64,9 +64,9 @@ import Layout from "../layouts/Layout.astro"
 
         <div class="grid grid-cols-2 gap-2 md:grid-cols-4">
           <button
-            @click="resetToDefault()"
+            @click="resetToDefault(false)"
             class="rounded border border-gray-300 bg-white p-2 text-sm hover:bg-gray-100"
-            title="Reset all categories and settings to their default values"
+            title="Reset all categories and settings to their default values (preserves algorithm selection)"
           >
             Reset to Default
           </button>
@@ -97,6 +97,35 @@ import Layout from "../layouts/Layout.astro"
           >
             Equal Necessity Levels
           </button>
+        </div>
+
+        <h3 class="mt-4 mb-2 font-semibold">Allocation Algorithm</h3>
+        <div class="mb-4">
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center gap-2">
+              <select
+                @change="changeAlgorithm($event.target.value)"
+                class="rounded border border-gray-300 bg-white p-2 text-sm"
+              >
+                <template
+                  x-for="(algorithm, index) in algorithms"
+                  :key="index"
+                >
+                  <option
+                    :value="index"
+                    x-text="algorithm.name"
+                    :selected="index === selectedAlgorithmIndex"
+                  >
+                  </option>
+                </template>
+              </select>
+              <span
+                class="text-sm text-gray-700"
+                x-text="getCurrentAlgorithm().description"
+              >
+              </span>
+            </div>
+          </div>
         </div>
 
         <h3 class="mt-4 mb-2 font-semibold">Test Scenarios</h3>
@@ -226,23 +255,35 @@ import Layout from "../layouts/Layout.astro"
               <div class="text-xs text-gray-500">Category name</div>
             </div>
             <div>
-              <div class="text-sm font-medium text-gray-600">Price per Unit</div>
+              <div class="text-sm font-medium text-gray-600">
+                Price per Unit
+              </div>
               <div class="text-xs text-gray-500">Cost per item</div>
             </div>
             <div>
-              <div class="text-sm font-medium text-gray-600">Utility Factor</div>
+              <div class="text-sm font-medium text-gray-600">
+                Utility Factor
+              </div>
               <div class="text-xs text-gray-500">Base value (0.1-10)</div>
             </div>
             <div>
-              <div class="text-sm font-medium text-gray-600">Basic Need Amount</div>
+              <div class="text-sm font-medium text-gray-600">
+                Basic Need Amount
+              </div>
               <div class="text-xs text-gray-500">Min. required units</div>
             </div>
             <div>
-              <div class="text-sm font-medium text-gray-600">Necessity Level</div>
-              <div class="text-xs text-gray-500">From 1 (luxury) to 10 (essential)</div>
+              <div class="text-sm font-medium text-gray-600">
+                Necessity Level
+              </div>
+              <div class="text-xs text-gray-500">
+                From 1 (luxury) to 10 (essential)
+              </div>
             </div>
             <div>
-              <div class="text-sm font-medium text-gray-600">Diminishing Returns</div>
+              <div class="text-sm font-medium text-gray-600">
+                Diminishing Returns
+              </div>
               <div class="text-xs text-gray-500">Saturation rate (0-1)</div>
             </div>
           </div>
@@ -251,7 +292,9 @@ import Layout from "../layouts/Layout.astro"
             x-for="(category, index) in categories"
             :key="index"
           >
-            <div class="relative grid grid-cols-7 gap-4 rounded border pb-5 pt-3 px-3">
+            <div
+              class="relative grid grid-cols-7 gap-4 rounded border px-3 pt-3 pb-5"
+            >
               <!-- Just inputs in a single row -->
               <input
                 type="text"
@@ -293,7 +336,8 @@ import Layout from "../layouts/Layout.astro"
                   :class="getNecessityLevelColor(category.necessityLevel)"
                   class="text-xs"
                   x-text="getNecessityLevelLabel(category.necessityLevel)"
-                ></span>
+                >
+                </span>
               </div>
               <input
                 type="number"
@@ -304,15 +348,25 @@ import Layout from "../layouts/Layout.astro"
                 min="0"
                 max="1"
               />
-              <div class="absolute right-0 top-0 bottom-0">
+              <div class="absolute top-0 right-0 bottom-0">
                 <button
                   @click="removeCategory(index)"
-                  class="flex h-full items-center px-4 bg-red-500 text-white"
+                  class="flex h-full items-center bg-red-500 px-4 text-white"
                   title="Remove category"
                 >
                   <span class="sr-only">Remove</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                      clip-rule="evenodd"
+                    >
+                    </path>
                   </svg>
                 </button>
               </div>
@@ -324,113 +378,27 @@ import Layout from "../layouts/Layout.astro"
       <div class="rounded-lg border p-4 shadow-md">
         <h2 class="mb-4 text-xl font-semibold">Optimization Results</h2>
         <div class="mb-6">
-          <h3 class="mb-2 font-semibold">Budget Allocation</h3>
-          <p class="mb-3 text-sm text-gray-600">
-            Items are sorted by necessity level (highest to lowest). The colored
-            dots match their corresponding pie chart segments.
-          </p>
-          <div class="overflow-x-auto">
-            <table class="w-full border-collapse">
-              <thead>
-                <tr class="bg-gray-100">
-                  <th class="border p-2 text-left">Category</th>
-                  <th class="border p-2 text-left">Necessity</th>
-                  <th class="border p-2 text-left">Quantity</th>
-                  <th class="border p-2 text-left">Basic Needs</th>
-                  <th class="border p-2 text-left">Spent</th>
-                  <th class="border p-2 text-left">Utility</th>
-                </tr>
-              </thead>
-              <tbody>
-                <template
-                  x-for="(allocation, index) in allocations"
-                  :key="index"
-                >
-                  <tr>
-                    <td class="border p-2">
-                      <div class="flex items-center space-x-2">
-                        <div
-                          :style="`background-color: ${getCategoryColor(index)}`"
-                          class="h-3 w-3 flex-shrink-0 rounded-full"
-                        >
-                        </div>
-                        <span x-text="allocation.category.name"></span>
-                      </div>
-                    </td>
-                    <td class="border p-2">
-                      <span
-                        :class="getNecessityLevelColor(allocation.category.necessityLevel)"
-                        x-text="getNecessityLevelLabel(allocation.category.necessityLevel)"
-                      >
-                      </span>
-                    </td>
-                    <td class="border p-2">
-                      <span x-text="allocation.quantity"></span>
-                      <span
-                        x-show="allocation.quantity > allocation.category.basicNeedAmount"
-                      >
-                        (<span
-                          x-text="allocation.quantity - allocation.category.basicNeedAmount"
-                        >
-                        </span> extra)
-                      </span>
-                    </td>
-                    <td class="border p-2">
-                      <div class="h-4 w-full bg-gray-200">
-                        <div
-                          :class="getBasicNeedsSatisfactionColor(calculateBasicNeedsSatisfaction(allocation))"
-                          :style="`width: ${calculateBasicNeedsSatisfaction(allocation)}%`"
-                          class="h-full"
-                        >
-                        </div>
-                      </div>
-                      <span
-                        x-text="`${calculateBasicNeedsSatisfaction(allocation).toFixed(0)}%`"
-                      >
-                      </span>
-                    </td>
-                    <td class="border p-2">
-                      <span x-text="formatCurrency(allocation.spent)"></span>
-                      <span class="text-xs text-gray-500">
-                        (<span
-                          x-text="formatPercentage(allocation.spent, totalSpent)"
-                        >
-                        </span>)
-                      </span>
-                    </td>
-                    <td class="border p-2">
-                      <span x-text="allocation.utility.toFixed(1)"></span>
-                      <span class="text-xs text-gray-500">
-                        (<span
-                          x-text="formatPercentage(allocation.utility, totalUtility)"
-                        >
-                        </span>)
-                      </span>
-                    </td>
-                  </tr>
-                </template>
-              </tbody>
-              <tfoot>
-                <tr class="font-semibold">
-                  <td
-                    class="border p-2"
-                    colspan="4"
-                  >
-                    Total
-                  </td>
-                  <td
-                    class="border p-2"
-                    x-text="formatCurrency(totalSpent)"
-                  >
-                  </td>
-                  <td
-                    class="border p-2"
-                    x-text="totalUtility.toFixed(1)"
-                  >
-                  </td>
-                </tr>
-              </tfoot>
-            </table>
+          <h3 class="mb-2 font-semibold">Optimal Spending Results</h3>
+          <div class="mt-1 flex justify-between text-sm text-gray-500">
+            <div>
+              <span class="font-semibold">Algorithm:</span>
+              <span x-text="getCurrentAlgorithm().name"></span>
+            </div>
+            <div>
+              <span class="font-semibold">Total Utility:</span>
+              <span x-text="totalUtility.toFixed(2)"></span>
+            </div>
+            <div>
+              <span class="font-semibold">Total Spent:</span>
+              <span x-text="formatCurrency(totalSpent)"></span>
+            </div>
+          </div>
+          <div
+            class="mt-1 text-sm text-gray-500"
+            x-show="optimizationMessage"
+          >
+            <span class="font-semibold">Note:</span>
+            <span x-text="optimizationMessage"></span>
           </div>
         </div>
 
@@ -578,12 +546,6 @@ import Layout from "../layouts/Layout.astro"
                 </template>
               </div>
             </div>
-          </div>
-          <div
-            x-show="optimizationMessage"
-            class="mt-4 rounded border border-yellow-300 bg-yellow-100 p-2"
-            x-text="optimizationMessage"
-          >
           </div>
         </div>
       </div>

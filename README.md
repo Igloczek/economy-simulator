@@ -56,6 +56,24 @@ This approach ensures that essential needs like housing and food are always prio
 
 Write the Alpine.js code mostly in `<script>` tags as components, not inline. HTML is only for visualizations, not for logic. This separation keeps the codebase maintainable and follows best practices.
 
+## Economic Algorithms
+
+The simulator supports multiple economic allocation algorithms which can be selected from the UI. These algorithms implement different approaches to distributing a budget across spending categories:
+
+1. **Priority Necessity**: Focuses on meeting basic needs for high-necessity items first
+2. **Pure Utility Maximizer**: Ignores necessity levels and purely maximizes utility per dollar
+3. **Balanced Approach**: Allocates a portion of the budget to basic needs, then optimizes the rest
+
+### Creating New Algorithms
+
+To create a new algorithm, use the scaffolding tool:
+
+```bash
+npm run create-algorithm
+```
+
+This interactive tool will guide you through creating a new algorithm implementation. For more information, see the [Algorithm Development Guide](docs/algorithm-development.md).
+
 ## Usage
 
 The simulator allows you to:

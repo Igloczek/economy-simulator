@@ -1,5 +1,5 @@
 import { registerComponent } from "@/scripts/alpine.ts"
-import { calculateOptimalSpending } from "@/scripts/economy-model"
+import algorithms, { type AllocationAlgorithm } from "@/scripts/algorithms"
 
 registerComponent("app", {
   budget: 1000,
@@ -11,6 +11,10 @@ registerComponent("app", {
   totalUtility: 0,
   totalSpent: 0,
   optimizationMessage: "",
+
+  // Available algorithms and current selection
+  algorithms: algorithms,
+  selectedAlgorithmIndex: 0,
 
   // Model settings
   modelSettings: {
@@ -71,12 +75,52 @@ registerComponent("app", {
   },
 
   init() {
-    // Initialize with default categories
-    this.resetToDefault()
+    console.log("Initializing economy simulator")
+    console.log(
+      "Available algorithms:",
+      this.algorithms.map((a) => a.name),
+    )
+
+    // Initialize with default categories, and explicitly reset algorithm to the first one
+    this.resetToDefault(true)
+
+    console.log("Initial algorithm:", this.getCurrentAlgorithm().name)
+  },
+
+  // Get the current algorithm
+  getCurrentAlgorithm() {
+    return this.algorithms[this.selectedAlgorithmIndex]
+  },
+
+  // Change the current algorithm
+  changeAlgorithm(index) {
+    console.log("Changing algorithm to index:", index, "Type:", typeof index)
+
+    // Make sure index is a number and valid
+    const numericIndex = parseInt(index, 10)
+    console.log("Parsed index:", numericIndex)
+
+    if (
+      isNaN(numericIndex) ||
+      numericIndex < 0 ||
+      numericIndex >= this.algorithms.length
+    ) {
+      console.error("Invalid algorithm index:", index)
+      return
+    }
+
+    // Update the selected algorithm index
+    this.selectedAlgorithmIndex = numericIndex
+    console.log("Algorithm switched to:", this.algorithms[numericIndex].name)
+
+    // Recalculate with the new algorithm
+    this.calculateOptimalSpending()
   },
 
   // MACRO FUNCTIONS
-  resetToDefault() {
+  resetToDefault(resetAlgorithm = false) {
+    console.log("Resetting to default. Reset algorithm:", resetAlgorithm)
+
     // Reset model settings
     this.modelSettings = {
       equalFactors: false,
@@ -90,6 +134,18 @@ registerComponent("app", {
 
     // Reset budget
     this.budget = 1000
+
+    // Reset algorithm only if explicitly requested
+    if (resetAlgorithm) {
+      const currentAlgo = this.getCurrentAlgorithm().name
+      this.selectedAlgorithmIndex = 0
+      console.log(
+        "Algorithm reset from",
+        currentAlgo,
+        "to",
+        this.getCurrentAlgorithm().name,
+      )
+    }
 
     this.calculateOptimalSpending()
   },
@@ -173,6 +229,11 @@ registerComponent("app", {
   },
 
   calculateOptimalSpending() {
+    console.log(
+      "Calculating optimal spending with algorithm index:",
+      this.selectedAlgorithmIndex,
+    )
+
     // Convert string values to numbers (Alpine bindings can sometimes keep them as strings)
     const processedCategories = this.categories.map((cat) => ({
       ...cat,
@@ -183,10 +244,12 @@ registerComponent("app", {
       necessityLevel: Number(cat.necessityLevel),
     }))
 
-    const result = calculateOptimalSpending(
-      processedCategories,
-      Number(this.budget),
-    )
+    // Get the current algorithm
+    const algorithm = this.getCurrentAlgorithm()
+    console.log("Using algorithm:", algorithm.name)
+
+    // Run the selected algorithm
+    const result = algorithm.calculate(processedCategories, Number(this.budget))
 
     this.allocations = result.allocations
     this.totalUtility = result.totalUtility
@@ -262,31 +325,38 @@ registerComponent("app", {
         percent,
         startPercent,
         endPercent: cumulativeUtilityPercent,
-        color: this.getCategoryColor(index),
+        color: this.getCategoryColor(
+          this.allocations.findIndex(
+            (a) => a.category.name === allocation.category.name,
+          ),
+        ),
       }
     })
   },
 
-  // Helper method to get a color for a category
   getCategoryColor(index) {
+    // Array of colors for categories
     const colors = [
-      "#3B82F6", // blue-500
-      "#EF4444", // red-500
-      "#10B981", // green-500
-      "#F59E0B", // amber-500
-      "#8B5CF6", // purple-500
-      "#EC4899", // pink-500
-      "#06B6D4", // cyan-500
-      "#F97316", // orange-500
+      "hsl(220, 70%, 50%)", // Blue
+      "hsl(160, 70%, 40%)", // Green
+      "hsl(350, 70%, 50%)", // Red
+      "hsl(40, 80%, 50%)", // Orange
+      "hsl(300, 70%, 50%)", // Purple
+      "hsl(180, 70%, 40%)", // Teal
+      "hsl(80, 60%, 45%)", // Lime
+      "hsl(260, 60%, 55%)", // Violet
+      "hsl(20, 80%, 50%)", // Burnt Orange
+      "hsl(200, 70%, 50%)", // Light Blue
     ]
 
     return colors[index % colors.length]
   },
 
-  // Utility functions for visualization
   calculateBasicNeedsSatisfaction(allocation) {
-    const { quantity, category } = allocation
-    return Math.min(100, (quantity / category.basicNeedAmount) * 100)
+    return Math.min(
+      100,
+      (allocation.quantity / allocation.category.basicNeedAmount) * 100,
+    )
   },
 
   getBasicNeedsSatisfactionColor(percentage) {
@@ -296,18 +366,18 @@ registerComponent("app", {
   },
 
   getNecessityLevelLabel(level) {
-    if (level >= 9) return "Essential"
-    if (level >= 7) return "Very Important"
-    if (level >= 5) return "Important"
-    if (level >= 3) return "Useful"
+    if (level >= 9) return "Critical"
+    if (level >= 7) return "High"
+    if (level >= 5) return "Medium"
+    if (level >= 3) return "Low"
     return "Luxury"
   },
 
   getNecessityLevelColor(level) {
-    if (level >= 9) return "text-red-600"
-    if (level >= 7) return "text-orange-500"
-    if (level >= 5) return "text-yellow-500"
-    if (level >= 3) return "text-blue-500"
-    return "text-green-500"
+    if (level >= 9) return "text-red-600 font-bold"
+    if (level >= 7) return "text-orange-600 font-bold"
+    if (level >= 5) return "text-yellow-600"
+    if (level >= 3) return "text-blue-600"
+    return "text-purple-600"
   },
 })
