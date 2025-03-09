@@ -2,12 +2,19 @@ import type { AllocationAlgorithm } from "./algorithm-interface"
 import { PriorityNecessityAlgorithm } from "./priority-necessity-algorithm"
 import { PureUtilityAlgorithm } from "./pure-utility-algorithm"
 import { BalancedApproachAlgorithm } from "./balanced-approach-algorithm"
-
+import { FlatTimeUtilityMaximisationAlgorithm } from "./flat-time-utility-maximiser"
+import { MarginalUtilityAlgorithm } from "./marginal-utility-algorithm"
+import { OptimisedMarginalUtilityAlgorithm } from "./marginal-utility-algorithm-optimisation"
+import { OptimisedMarginalUtilityBudgetFixAlgorithm } from "./optimised-marginal-utility-budget-fix-algorithm"
 // Create instances of all algorithms
 const algorithms: AllocationAlgorithm[] = [
   new PriorityNecessityAlgorithm(),
   new PureUtilityAlgorithm(),
   new BalancedApproachAlgorithm(),
+  new FlatTimeUtilityMaximisationAlgorithm(),
+  new MarginalUtilityAlgorithm(),
+  new OptimisedMarginalUtilityAlgorithm(),  new OptimisedMarginalUtilityBudgetFixAlgorithm(),
+
 ]
 
 // Export the algorithm registry

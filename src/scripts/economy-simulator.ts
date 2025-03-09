@@ -11,6 +11,7 @@ registerComponent("app", {
   totalUtility: 0,
   totalSpent: 0,
   optimizationMessage: "",
+  searchQuery: "",
 
   // Available algorithms and current selection
   algorithms: algorithms,
@@ -191,6 +192,14 @@ registerComponent("app", {
     this.calculateOptimalSpending()
   },
 
+  translateNecessitiesToUtilities() {
+    this.categories.forEach((category) => {
+      category.utilityFactor = category.necessityLevel
+    })
+
+    this.calculateOptimalSpending()
+  },
+
   applyHighContrast() {
     // Create high contrast between necessities
     this.categories.forEach((category) => {
@@ -250,14 +259,20 @@ registerComponent("app", {
       basicNeedAmount: Number(cat.basicNeedAmount),
       diminishingFactor: Number(cat.diminishingFactor),
       necessityLevel: Number(cat.necessityLevel),
+      quantity: 0,
+      utility: 0,
+      spent: 0,
     }))
 
     // Get the current algorithm
     const algorithm = this.getCurrentAlgorithm()
     console.log("Using algorithm:", algorithm.name)
 
+
+    const DAYS_IN_MONTH = 30
+    const dailyBudget = Number(this.budget / DAYS_IN_MONTH)
     // Run the selected algorithm
-    const result = algorithm.calculate(processedCategories, Number(this.budget / 30))
+    const result = algorithm.calculate(processedCategories, dailyBudget)
 
     this.allocations = result.allocations
     this.totalUtility = result.totalUtility
