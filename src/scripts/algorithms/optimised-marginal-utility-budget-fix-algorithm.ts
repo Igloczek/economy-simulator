@@ -3,7 +3,7 @@ import { calculateUtility } from "../economy-model"
 import type { AllocationAlgorithm, AllocationResult } from "./algorithm-interface"
 
 /**
- * optimised marginla utility but for checks for max budget allocation
+ * optimised margin utility but for checks for max budget allocation
  */
 export class OptimisedMarginalUtilityBudgetFixAlgorithm implements AllocationAlgorithm {
   name = "optimised marginal utility budget fix"
@@ -83,6 +83,8 @@ export class OptimisedMarginalUtilityBudgetFixAlgorithm implements AllocationAlg
       totalUtility += utility;
     }
     
+    // COMMENTED OUT BECAUSE IT'S DUMB, it shouldn't be just dumped into one category
+    // it should be distributed among the categories based on the ratio of the total utility
     // Final step: if there's any leftover budget, assign it to one category.
     // if (totalSpent < budget) {
     //   const leftover = budget - totalSpent;
