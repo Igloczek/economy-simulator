@@ -51,6 +51,23 @@ import Layout from "../layouts/Layout.astro"
           real-world behavior.
         </p>
       </div>
+      <p class="mt-2 text-red-500 text-xl">
+        <span class="text-black text-red-500">Checkmarks for good algorithms:</span>
+        <ul class="list-inside list-disc">
+          <li>
+            <strong>Doesn't leave unallocated money unless there's no way to allocate it</strong>
+          </li>
+          <li>
+            <strong>No luxury should be paid for if there's not enough money for necessities</strong>
+          </li>
+          <li>
+            <strong>Luxury goods should be purchased in a way that maximises utility per buck</strong>
+          </li>
+          <li>
+            <strong>The algorithm should give a feel of marginal utility</strong>
+          </li>
+        </ul>
+      </p>
     </div>
 
     <h1 class="my-6 text-3xl font-bold">Economy Simulator</h1>
@@ -560,6 +577,7 @@ import Layout from "../layouts/Layout.astro"
                           x-text="formatPercentage(allocation.utility, totalUtility)"
                         >
                         </span>)
+                        //<span x-text="allocation.utilityPerBuckOfNextQuantity"></span>
                       </span>
                     </td>
                   </tr>

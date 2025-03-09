@@ -33,6 +33,8 @@ export class OptimisedMarginalUtilityBudgetFixAlgorithm implements AllocationAlg
       let ratio = 0;
       if (cat.basicNeedAmount !== 0 && Number.isFinite(cat.utilityFactor / cat.price)) {
         ratio = cat.utilityFactor / cat.price;
+      } else {
+        ratio = null;
       }
       // Compute initial (unsaturated) allocation:
       const initAlloc = ratio ? (ratio / totalRatio) * (budget / cat.price) : 0;
@@ -61,7 +63,9 @@ export class OptimisedMarginalUtilityBudgetFixAlgorithm implements AllocationAlg
       let quantity = 0;
       
       // If invalid ratio or the unsaturated optimum exceeds basicNeedAmount, use basicNeedAmount.
-      if (ratio === 0 || initAlloc >= cat.basicNeedAmount) {
+      if (ratio === null) {
+        quantity = cat.basicNeedAmount;
+      } else if (ratio === 0 || initAlloc >= cat.basicNeedAmount) {
         quantity = cat.basicNeedAmount;
       } else {
         // Allocate remaining budget among unsaturated categories.
@@ -73,31 +77,31 @@ export class OptimisedMarginalUtilityBudgetFixAlgorithm implements AllocationAlg
       
       const spent = quantity * cat.price;
       const utility = cat.utilityFactor * (1 - Math.exp(-quantity));
+      results[i] = { category: cat, quantity, spent, utility, utilityPerBuckOfNextQuantity: 0  };
       
-      results[i] = { category: cat, quantity, spent, utility };
       totalSpent += spent;
       totalUtility += utility;
     }
     
     // Final step: if there's any leftover budget, assign it to one category.
-    if (totalSpent < budget) {
-      const leftover = budget - totalSpent;
-      // For example, pick the category with the lowest price to add extra quantity.
-      let extraIndex = 0;
-      let minPrice = categories[0].price;
-      for (let i = 1; i < n; i++) {
-        if (categories[i].price < minPrice) {
-          minPrice = categories[i].price;
-          extraIndex = i;
-        }
-      }
-      const extraQuantity = leftover / categories[extraIndex].price;
-      // Increase quantity and spent for that category.
-      results[extraIndex].quantity += extraQuantity;
-      results[extraIndex].spent += leftover;
-      totalSpent += leftover;
-      // Note: extra quantity is beyond the basicNeedAmount, so utility remains unchanged.
-    }
+    // if (totalSpent < budget) {
+    //   const leftover = budget - totalSpent;
+    //   // For example, pick the category with the lowest price to add extra quantity.
+    //   let extraIndex = 0;
+    //   let minPrice = categories[0].price;
+    //   for (let i = 1; i < n; i++) {
+    //     if (categories[i].price < minPrice && categories[i].price > 0) {
+    //       minPrice = categories[i].price;
+    //       extraIndex = i;
+    //     }
+    //   }
+    //   const extraQuantity = categories[extraIndex].price > 0 ? leftover / categories[extraIndex].price : 0;
+    //   // Increase quantity and spent for that category.
+    //   results[extraIndex].quantity += extraQuantity;
+    //   results[extraIndex].spent += leftover;
+    //   totalSpent += leftover;
+    //   // Note: extra quantity is beyond the basicNeedAmount, so utility remains unchanged.
+    // }
     
     return { allocations: results, totalSpent, totalUtility };
   }
