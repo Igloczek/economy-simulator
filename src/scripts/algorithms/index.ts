@@ -10,6 +10,7 @@ import { SimpleProportionsAlgorithm } from "./simple-proportions-algorithm"
 import { MarginalUtilityOptimizer } from "./gradient-descent-algorithm"
 import { PairProgrammingAlgorithm } from "./pair-programming-algorithm"
 import { BucketUtilitySmoothingAlgorithm } from "./bucket-utility-smoothing-algorithm"
+import { BlurAlgorithm } from "./blur-algorithm"
 
 // Create instances of all algorithms
 const algorithms: AllocationAlgorithm[] = [
@@ -18,11 +19,13 @@ const algorithms: AllocationAlgorithm[] = [
   new BalancedApproachAlgorithm(),
   new FlatTimeUtilityMaximisationAlgorithm(),
   new MarginalUtilityAlgorithm(),
-  new OptimisedMarginalUtilityAlgorithm(),  new OptimisedMarginalUtilityBudgetFixAlgorithm(),
+  new OptimisedMarginalUtilityAlgorithm(),
+  new OptimisedMarginalUtilityBudgetFixAlgorithm(),
   new SimpleProportionsAlgorithm(),
   new MarginalUtilityOptimizer(),
   new PairProgrammingAlgorithm(),
   new BucketUtilitySmoothingAlgorithm(),
+  new BlurAlgorithm(),
 ]
 
 // Export the algorithm registry
