@@ -9,6 +9,8 @@ import { OptimisedMarginalUtilityBudgetFixAlgorithm } from "./optimised-marginal
 import { SimpleProportionsAlgorithm } from "./simple-proportions-algorithm"
 import { MarginalUtilityOptimizer } from "./gradient-descent-algorithm"
 import { PairProgrammingAlgorithm } from "./pair-programming-algorithm"
+import { BucketUtilitySmoothingAlgorithm } from "./bucket-utility-smoothing-algorithm"
+
 // Create instances of all algorithms
 const algorithms: AllocationAlgorithm[] = [
   new PriorityNecessityAlgorithm(),
@@ -20,7 +22,7 @@ const algorithms: AllocationAlgorithm[] = [
   new SimpleProportionsAlgorithm(),
   new MarginalUtilityOptimizer(),
   new PairProgrammingAlgorithm(),
-
+  new BucketUtilitySmoothingAlgorithm(),
 ]
 
 // Export the algorithm registry
