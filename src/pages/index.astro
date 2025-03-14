@@ -51,23 +51,42 @@ import Layout from "../layouts/Layout.astro"
           real-world behavior.
         </p>
       </div>
-      <p class="mt-2 text-red-500 text-xl">
-        <span class="text-black text-red-500">Checkmarks for good algorithms:</span>
+      <p class="mt-2 text-xl text-red-500">
+        <span class="text-black text-red-500">
+          Checkmarks for good algorithms:
+        </span>
         <ul class="list-inside list-disc">
           <li>
-            <strong>Doesn't leave unallocated money unless there's no way to allocate it</strong>
+            <strong>
+              Doesn't leave unallocated money unless there's no way to allocate
+              it
+            </strong>
           </li>
           <li>
-            <strong>No luxury should be paid for if there's not enough money for necessities</strong>
+            <strong>
+              No luxury should be paid for if there's not enough money for
+              necessities
+            </strong>
           </li>
           <li>
-            <strong>Luxury goods should be purchased in a way that maximises utility per buck</strong>
+            <strong>
+              Luxury goods should be purchased in a way that maximises utility
+              per buck
+            </strong>
           </li>
           <li>
-            <strong>The algorithm should give a feel of marginal utility</strong>
+            <strong>
+              The algorithm should give a feel of marginal utility
+            </strong>
           </li>
           <li>
-            <strong>It should not be chaotic in mathematical terms. i.e. small increase in real estate price should not lead us to go from spending 60% of our budget on real estate to 0% or 100%. Failing to ensure this will cause treshold-like behaviour - sharp jumps during the game</strong>
+            <strong>
+              It should not be chaotic in mathematical terms. i.e. small
+              increase in real estate price should not lead us to go from
+              spending 60% of our budget on real estate to 0% or 100%. Failing
+              to ensure this will cause treshold-like behaviour - sharp jumps
+              during the game
+            </strong>
           </li>
         </ul>
       </p>
@@ -150,21 +169,20 @@ import Layout from "../layouts/Layout.astro"
 
         <h3 class="mt-4 mb-2 font-semibold">Test Scenarios</h3>
         <div class="grid grid-cols-2 gap-2 md:grid-cols-4">
-
           <button
-          @click="applyKowalskiScenario()"
-          class="rounded border border-gray-300 bg-white p-2 text-sm hover:bg-gray-100"
-          title="Apply Kowalski scenario"
-        >
-          Kowalski Scenario
-        </button>
+            @click="applyKowalskiScenario()"
+            class="rounded border border-gray-300 bg-white p-2 text-sm hover:bg-gray-100"
+            title="Apply Kowalski scenario"
+          >
+            Kowalski Scenario
+          </button>
           <button
             @click="translateNecessitiesToUtilities()"
             class="rounded border border-gray-300 bg-white p-2 text-sm hover:bg-gray-100"
             title="Make essentials very necessary (10) and luxuries very optional (1)"
           >
             Translate Necessities to Utilities
-        </button>
+          </button>
           <button
             @click="applyHighContrast()"
             class="rounded border border-gray-300 bg-white p-2 text-sm hover:bg-gray-100"
@@ -188,7 +206,6 @@ import Layout from "../layouts/Layout.astro"
           >
             High Budget ($2000)
           </button>
-
         </div>
       </div>
     </div>
@@ -201,7 +218,7 @@ import Layout from "../layouts/Layout.astro"
             class="mb-2 block"
             for="income"
           >
-            Monthly Income: <span x-text="formatCurrency(budget)"></span><br>
+            Monthly Income: <span x-text="formatCurrency(budget)"></span><br />
             Daily budget: <span x-text="formatCurrency(budget / 30)"></span>
           </label>
           <div class="flex items-center space-x-4">
@@ -274,7 +291,9 @@ import Layout from "../layouts/Layout.astro"
           </div>
         </div>
 
-        <h2 class="mb-4 text-xl font-semibold">Spending Categories (per day)</h2>
+        <h2 class="mb-4 text-xl font-semibold">
+          Spending Categories (per day)
+        </h2>
         <div class="mb-4">
           <button
             @click="addCategory()"
@@ -343,7 +362,6 @@ import Layout from "../layouts/Layout.astro"
             </div>
           </div>
 
-
           <template
             x-for="(category, index) in categories.filter(c => !searchQuery || c.name.toLowerCase().includes(searchQuery.toLowerCase()))"
             :key="index"
@@ -355,20 +373,21 @@ import Layout from "../layouts/Layout.astro"
               <textarea
                 x-model="category.name"
                 @input="calculateOptimalSpending()"
-                class=" w-full rounded border px-2 "
-              />
+                class="w-full rounded border px-2"
+              >
+              </textarea>
               <input
                 type="number"
                 x-model="category.price"
                 @input="calculateOptimalSpending()"
                 class="h-8 w-full rounded border px-2"
               />
-              <div class="grid grid-rows-[32px_16px] ">
+              <div class="grid grid-rows-[32px_16px]">
                 <input
                   type="number"
                   x-model="category.utilityFactor"
                   @input="calculateOptimalSpending()"
-                  class="h-8 w-full rounded border px-2 "
+                  class="h-8 w-full rounded border px-2"
                   step="0.1"
                 />
                 <!--Slider -->
@@ -377,7 +396,7 @@ import Layout from "../layouts/Layout.astro"
                     type="range"
                     x-model="category.utilityFactor"
                     @input="calculateOptimalSpending()"
-                    class="h-8 w-full rounded border "
+                    class="h-8 w-full rounded border"
                     step="0.1"
                     max="10"
                     min="0.1"
@@ -392,40 +411,36 @@ import Layout from "../layouts/Layout.astro"
                   class="h-8 w-full rounded border px-2"
                   min="0"
                 />
-                <span  class="text-xs">
+                <span class="text-xs">
+                  <span x-text="category.unit"></span>
                   <span
-                 
-                  x-text="category.unit"
-                >
+                    x-show="category.unit === 'ml'"
+                    x-text="`(${category.basicNeedAmount / 1000}l)`"
+                  >
+                  </span>
+                  <span
+                    x-show="category.unit === 'g' && category.basicNeedAmount < 50"
+                    x-text="`(${category.basicNeedAmount / 3} teaspoons)`"
+                  >
+                  </span>
+                  <span
+                    x-show="category.unit === 'cm2'"
+                    x-text="`(${category.basicNeedAmount / 10_000}m2)`"
+                  >
+                  </span>
+                  <span
+                    x-show="category.timespan === 'perYear'"
+                    x-text="`(per year)`"
+                  >
+                  </span>
+                  <span
+                    x-show="category.timespan === 'perDecade'"
+                    x-text="`(per decade)`"
+                  >
+                  </span>
                 </span>
-                <span
-                  x-show="category.unit === 'ml'"
-                  x-text="`(${category.basicNeedAmount / 1000}l)`"
-                >
-                </span>
-                <span
-                  x-show="category.unit === 'g' && category.basicNeedAmount < 50"
-                  x-text="`(${category.basicNeedAmount / 3} teaspoons)`"
-                >
-                </span>
-                <span
-                  x-show="category.unit === 'cm2'"
-                  x-text="`(${category.basicNeedAmount / 10_000}m2)`"
-                >
-                </span>
-                <span
-                  x-show="category.timespan === 'perYear'"
-                  x-text="`(per year)`"
-                >
-                </span>
-                <span
-                  x-show="category.timespan === 'perDecade'"
-                  x-text="`(per decade)`"
-                >
-                </span>
-              </span>
               </div>
-        
+
               <div class="grid grid-rows-[32px_16px]">
                 <input
                   type="number"
@@ -458,12 +473,15 @@ import Layout from "../layouts/Layout.astro"
                     type="range"
                     x-model="category.diminishingFactor"
                     @input="calculateOptimalSpending()"
-                    class="h-8 w-full rounded border "
+                    class="h-8 w-full rounded border"
                   />
                 </div>
               </div>
               <div>
-                <span x-text="Math.round((category.utilityFactor / category.price) * 10) / 10"></span>
+                <span
+                  x-text="Math.round((category.utilityFactor / category.price) * 10) / 10"
+                >
+                </span>
               </div>
 
               <div class="absolute top-0 right-0 bottom-0">
@@ -505,18 +523,18 @@ import Layout from "../layouts/Layout.astro"
           <div class="overflow-x-auto">
             <table class="w-full table-fixed border-collapse">
               <colgroup>
-                <col class="w-[200px]">
-                <col class="w-[100px]">
-                <col class="w-[150px]">
-                <col class="w-[100px]">
-                <col class="w-[100px]">
-                <col class="w-[100px]">
+                <col class="w-[200px]" />
+                <col class="w-[100px]" />
+                <col class="w-[150px]" />
+                <col class="w-[100px]" />
+                <col class="w-[100px]" />
+                <col class="w-[100px]" />
               </colgroup>
               <thead>
                 <tr class="bg-gray-100">
                   <th class="border p-2 text-left">Category</th>
                   <th class="border p-2 text-left">Necessity</th>
-                  <th class="border p-2 text-left ">Quantity</th>
+                  <th class="border p-2 text-left">Quantity</th>
                   <th class="border p-2 text-left">Basic Needs</th>
                   <th class="border p-2 text-left">Spent</th>
                   <th class="border p-2 text-left">Utility</th>
@@ -546,8 +564,15 @@ import Layout from "../layouts/Layout.astro"
                       </span>
                     </td>
                     <td class="border p-2">
-                      <div class="max-w-[180px] overflow-hidden text-ellipsis whitespace-nowrap">
-                        <span x-text="allocation.quantity + ' ' + (allocation.quantity > allocation.category.basicNeedAmount ? `(extra ${allocation.quantity - allocation.category.basicNeedAmount})` : '')"></span>
+                      <div
+                        class="flex max-w-[180px] flex-col items-center justify-center overflow-hidden text-ellipsis whitespace-nowrap"
+                      >
+                        <div x-text="allocation.quantity"></div>
+                        <div
+                          x-show="allocation.quantity > allocation.category.basicNeedAmount"
+                          x-text="`(extra ${Math.round(allocation.quantity - allocation.category.basicNeedAmount).toFixed(2)})`"
+                        >
+                        </div>
                       </div>
                     </td>
                     <td class="border p-2">
@@ -579,9 +604,14 @@ import Layout from "../layouts/Layout.astro"
                         (<span
                           x-text="formatPercentage(allocation.utility, totalUtility)"
                         >
-                        </span>)
-                        //<span x-text="allocation.utilityPerBuckOfNextQuantity"></span>
-                        Utility per spent: <span x-text="allocation.utilityPerDollar"></span>
+                        </span>) //<span
+                          x-text="allocation.utilityPerBuckOfNextQuantity"
+                        >
+                        </span>
+                        Utility per spent: <span
+                          x-text="allocation.utilityPerDollar"
+                        >
+                        </span>
                       </span>
                     </td>
                   </tr>
@@ -608,50 +638,123 @@ import Layout from "../layouts/Layout.astro"
                 </tr>
               </tfoot>
             </table>
-        </div>
-        <div class="mb-6">
-          <h3 class="mb-2 font-semibold">Optimal Spending Results</h3>
-          <div class="mt-1 flex justify-between text-sm text-gray-500">
-            <div>
-              <span class="font-semibold">Algorithm:</span>
-              <span x-text="getCurrentAlgorithm().name"></span>
+          </div>
+          <div class="mb-6">
+            <h3 class="mb-2 font-semibold">Optimal Spending Results</h3>
+            <div class="mt-1 flex justify-between text-sm text-gray-500">
+              <div>
+                <span class="font-semibold">Algorithm:</span>
+                <span x-text="getCurrentAlgorithm().name"></span>
+              </div>
+              <div>
+                <span class="font-semibold">Total Utility:</span>
+                <span x-text="totalUtility.toFixed(2)"></span>
+              </div>
+              <div>
+                <span class="font-semibold">Total Spent:</span>
+                <span x-text="formatCurrency(totalSpent)"></span>
+              </div>
             </div>
-            <div>
-              <span class="font-semibold">Total Utility:</span>
-              <span x-text="totalUtility.toFixed(2)"></span>
-            </div>
-            <div>
-              <span class="font-semibold">Total Spent:</span>
-              <span x-text="formatCurrency(totalSpent)"></span>
+            <div
+              class="mt-1 text-sm text-gray-500"
+              x-show="optimizationMessage"
+            >
+              <span class="font-semibold">Note:</span>
+              <span x-text="optimizationMessage"></span>
             </div>
           </div>
-          <div
-            class="mt-1 text-sm text-gray-500"
-            x-show="optimizationMessage"
-          >
-            <span class="font-semibold">Note:</span>
-            <span x-text="optimizationMessage"></span>
-          </div>
-        </div>
 
-        <div>
-          <h3 class="mb-4 font-semibold">Visualization</h3>
-          <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
-            <!-- Spending Pie Chart -->
-            <div>
-              <h4 class="mb-4 text-center font-medium">
-                Spending Distribution
-              </h4>
-              <div class="flex items-center justify-center">
-                <div class="relative h-64 w-64">
-                  <!-- Pie chart segments -->
+          <div>
+            <h3 class="mb-4 font-semibold">Visualization</h3>
+            <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+              <!-- Spending Pie Chart -->
+              <div>
+                <h4 class="mb-4 text-center font-medium">
+                  Spending Distribution
+                </h4>
+                <div class="flex items-center justify-center">
+                  <div class="relative h-64 w-64">
+                    <!-- Pie chart segments -->
+                    <template
+                      x-for="(segment, index) in chartData.spending"
+                      :key="index"
+                    >
+                      <div
+                        class="absolute inset-0 rounded-full"
+                        :style="`
+                        background-image: conic-gradient(
+                          transparent 0% ${segment.startPercent}%, 
+                          ${segment.color} ${segment.startPercent}%, 
+                          ${segment.color} ${segment.endPercent}%, 
+                          transparent ${segment.endPercent}% 100%
+                        );
+                      `"
+                        :title="`${segment.category.name}: ${segment.percent.toFixed(1)}%`"
+                      >
+                      </div>
+                    </template>
+
+                    <!-- Center circle -->
+                    <div
+                      class="absolute top-1/2 left-1/2 flex h-40 w-40 -translate-x-1/2 -translate-y-1/2 transform items-center justify-center rounded-full bg-white"
+                    >
+                      <div class="text-center">
+                        <div
+                          class="text-lg font-bold"
+                          x-text="formatCurrency(totalSpent)"
+                        >
+                        </div>
+                        <div class="text-xs text-gray-500">Total Spent</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="grid-cols- mt-4 grid gap-2">
                   <template
                     x-for="(segment, index) in chartData.spending"
                     :key="index"
                   >
-                    <div
-                      class="absolute inset-0 rounded-full"
-                      :style="`
+                    <div class="flex items-center space-x-2 text-sm">
+                      <div
+                        :style="`background-color: ${segment.color}`"
+                        class="h-3 w-3 rounded-full"
+                      >
+                      </div>
+                      <div
+                        class="flex-1 truncate"
+                        x-text="segment.category.name"
+                      >
+                      </div>
+                      <div class="font-semibold">
+                        <span
+                          x-text="formatCurrency(segment.category.price * allocations.find(a => a.category.name === segment.category.name).quantity)"
+                        >
+                        </span>
+                        (<span x-text="`${segment.percent.toFixed(1)}%`">
+                        </span>)
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </div>
+
+              <!-- Utility Pie Chart -->
+              <div>
+                <h4 class="mb-4 text-center font-medium">
+                  Utility Distribution
+                </h4>
+                <div class="flex items-center justify-center">
+                  <div class="relative h-64 w-64">
+                    <!-- Pie chart segments -->
+                    <template
+                      x-for="(segment, index) in chartData.utility"
+                      :key="index"
+                    >
+                      <div
+                        class="absolute inset-0 rounded-full"
+                        :style="`
                         background-image: conic-gradient(
                           transparent 0% ${segment.startPercent}%, 
                           ${segment.color} ${segment.startPercent}%, 
@@ -659,123 +762,55 @@ import Layout from "../layouts/Layout.astro"
                           transparent ${segment.endPercent}% 100%
                         );
                       `"
-                      :title="`${segment.category.name}: ${segment.percent.toFixed(1)}%`"
-                    >
-                    </div>
-                  </template>
-
-                  <!-- Center circle -->
-                  <div
-                    class="absolute top-1/2 left-1/2 flex h-40 w-40 -translate-x-1/2 -translate-y-1/2 transform items-center justify-center rounded-full bg-white"
-                  >
-                    <div class="text-center">
-                      <div
-                        class="text-lg font-bold"
-                        x-text="formatCurrency(totalSpent)"
+                        :title="`${segment.category.name}: ${segment.percent.toFixed(1)}%`"
                       >
                       </div>
-                      <div class="text-xs text-gray-500">Total Spent</div>
+                    </template>
+
+                    <!-- Center circle -->
+                    <div
+                      class="absolute top-1/2 left-1/2 flex h-40 w-40 -translate-x-1/2 -translate-y-1/2 transform items-center justify-center rounded-full bg-white"
+                    >
+                      <div class="text-center">
+                        <div
+                          class="text-lg font-bold"
+                          x-text="totalUtility.toFixed(1)"
+                        >
+                        </div>
+                        <div class="text-xs text-gray-500">Total Utility</div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <!-- Legend -->
-              <div class="mt-4 grid grid-cols- gap-2">
-                <template
-                  x-for="(segment, index) in chartData.spending"
-                  :key="index"
-                >
-                  <div class="flex items-center space-x-2 text-sm">
-                    <div
-                      :style="`background-color: ${segment.color}`"
-                      class="h-3 w-3 rounded-full"
-                    >
-                    </div>
-                    <div
-                      class="flex-1 truncate"
-                      x-text="segment.category.name"
-                    >
-                    </div>
-                    <div class="font-semibold">
-                      <span
-                        x-text="formatCurrency(segment.category.price * allocations.find(a => a.category.name === segment.category.name).quantity)"
-                      >
-                      </span>
-                      (<span x-text="`${segment.percent.toFixed(1)}%`"></span>)
-                    </div>
-                  </div>
-                </template>
-              </div>
-            </div>
-
-            <!-- Utility Pie Chart -->
-            <div>
-              <h4 class="mb-4 text-center font-medium">Utility Distribution</h4>
-              <div class="flex items-center justify-center">
-                <div class="relative h-64 w-64">
-                  <!-- Pie chart segments -->
+                <!-- Legend -->
+                <div class="mt-4 grid grid-cols-1 gap-2">
                   <template
                     x-for="(segment, index) in chartData.utility"
                     :key="index"
                   >
-                    <div
-                      class="absolute inset-0 rounded-full"
-                      :style="`
-                        background-image: conic-gradient(
-                          transparent 0% ${segment.startPercent}%, 
-                          ${segment.color} ${segment.startPercent}%, 
-                          ${segment.color} ${segment.endPercent}%, 
-                          transparent ${segment.endPercent}% 100%
-                        );
-                      `"
-                      :title="`${segment.category.name}: ${segment.percent.toFixed(1)}%`"
-                    >
-                    </div>
-                  </template>
-
-                  <!-- Center circle -->
-                  <div
-                    class="absolute top-1/2 left-1/2 flex h-40 w-40 -translate-x-1/2 -translate-y-1/2 transform items-center justify-center rounded-full bg-white"
-                  >
-                    <div class="text-center">
+                    <div class="flex items-center space-x-2 text-sm">
                       <div
-                        class="text-lg font-bold"
-                        x-text="totalUtility.toFixed(1)"
+                        :style="`background-color: ${segment.color}`"
+                        class="h-3 w-3 rounded-full"
                       >
                       </div>
-                      <div class="text-xs text-gray-500">Total Utility</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Legend -->
-              <div class="mt-4 grid grid-cols-1 gap-2">
-                <template
-                  x-for="(segment, index) in chartData.utility"
-                  :key="index"
-                >
-                  <div class="flex items-center space-x-2 text-sm">
-                    <div
-                      :style="`background-color: ${segment.color}`"
-                      class="h-3 w-3 rounded-full"
-                    >
-                    </div>
-                    <div
-                      class="flex-1 truncate"
-                      x-text="segment.category.name"
-                    >
-                    </div>
-                    <div class="font-semibold">
-                      <span
-                        x-text="allocations.find(a => a.category.name === segment.category.name).utility.toFixed(1)"
+                      <div
+                        class="flex-1 truncate"
+                        x-text="segment.category.name"
                       >
-                      </span>
-                      (<span x-text="`${segment.percent.toFixed(1)}%`"></span>)
+                      </div>
+                      <div class="font-semibold">
+                        <span
+                          x-text="allocations.find(a => a.category.name === segment.category.name).utility.toFixed(1)"
+                        >
+                        </span>
+                        (<span x-text="`${segment.percent.toFixed(1)}%`">
+                        </span>)
+                      </div>
                     </div>
-                  </div>
-                </template>
+                  </template>
+                </div>
               </div>
             </div>
           </div>
