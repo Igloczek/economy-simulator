@@ -24,10 +24,9 @@ export class PairProgrammingAlgorithm implements AllocationAlgorithm {
     
     let remainingBudget = budget
     let totalUtility = 0
-    
     // TODO: Implement your allocation logic here
     // This is a placeholder implementation that buys one unit of each category
-    for (const allocation of allocations) {
+    for (const allocation of sortedByUtilityPerBudget) {
       const { category } = allocation
       
       if (category.price <= remainingBudget) {
@@ -51,4 +50,9 @@ export class PairProgrammingAlgorithm implements AllocationAlgorithm {
       message,
     }
   }
+}
+
+
+function utilityFunction(category: Category, quantity: number) {
+  return 
 }

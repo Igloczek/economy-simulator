@@ -31,7 +31,9 @@ export class BlurAlgorithm implements AllocationAlgorithm {
       if (category.price <= remainingBudget) {
 
 
-        const canAffordRatio = remainingBudget / (category.price * category.basicNeedAmount) <= 1 ? remainingBudget / (category.price * category.basicNeedAmount) : 1
+        const canAffordRatio = remainingBudget / (category.price * category.basicNeedAmount) <= 1
+          ? remainingBudget / (category.price * category.basicNeedAmount) :
+          1
         // Purchase one unit
         allocation.quantity = allocation.category.basicNeedAmount * canAffordRatio
         allocation.spent = category.price * allocation.category.basicNeedAmount * canAffordRatio

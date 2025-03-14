@@ -2,7 +2,10 @@ import type { Category } from "../economy-model"
 import type { AllocationAlgorithm, AllocationResult } from "./algorithm-interface"
 
 /**
- * gradient descent
+ * Utility solver
+ * 
+ * 
+ * This function is wrong because it assumes that each good can achieve the same marginal utility per dollar if you buy enough of it.
  */
 export class MarginalUtilityOptimizer implements AllocationAlgorithm {
   name = "marginal-utility-optimizer"
@@ -131,7 +134,7 @@ export class MarginalUtilityOptimizer implements AllocationAlgorithm {
     // For quantities outside valid range, return 0
     // When quantity crosses basic need amount, total utility does not grow anymore
     if (quantity > category.basicNeedAmount) {
-      return this.calculateMaxTotalUtility(category)
+      return (category.utilityFactor * category.basicNeedAmount) / 2
     }
 
     return (category.utilityFactor * quantity) /2

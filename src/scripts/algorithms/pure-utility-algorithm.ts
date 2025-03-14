@@ -53,7 +53,7 @@ export class PureUtilityAlgorithm implements AllocationAlgorithm {
         const allocation = allocations[bestIndex]
         const category = allocation.category
 
-        allocation.quantity += 1
+        allocation.quantity += allocation.category.basicNeedAmount * 0.1
         allocation.spent += category.price
 
         const newUtility = calculateUtility(category, allocation.quantity)

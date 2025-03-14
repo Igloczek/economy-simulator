@@ -35,14 +35,14 @@ export class SimpleProportionsAlgorithm implements AllocationAlgorithm {
       const { category } = allocation
       if (category.price === 0 || category.utilityFactor === 0) {
         allocation.quantity = category.basicNeedAmount;
-      }else if (category.price <= remainingBudget) {
+      } else if (category.price <= remainingBudget) {
         // Purchase one unit
   
         allocation.spent = budget * ( (category.utilityFactor * category.basicNeedAmount) / (category.price) )
         totalSpent += allocation.spent
         allocation.quantity = allocation.spent / category.price
         allocation.utility = allocation.quantity * category.utilityFactor
-        allocation.utilityPerDollar = allocation.utility / allocation.spent
+        
         totalUtility += allocation.utility
         remainingBudget -= category.price
       }
