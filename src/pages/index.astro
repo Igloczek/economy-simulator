@@ -567,10 +567,14 @@ import Layout from "../layouts/Layout.astro"
                       <div
                         class="flex max-w-[180px] flex-col items-center justify-center overflow-hidden text-ellipsis whitespace-nowrap"
                       >
-                        <div x-text="allocation.quantity"></div>
                         <div
+                          x-text="Math.round(allocation.quantity).toFixed(2)"
+                        >
+                        </div>
+                        <div
+                          class="text-xs text-gray-500"
                           x-show="allocation.quantity > allocation.category.basicNeedAmount"
-                          x-text="`(extra ${Math.round(allocation.quantity - allocation.category.basicNeedAmount).toFixed(2)})`"
+                          x-text="`extra ${Math.round(allocation.quantity - allocation.category.basicNeedAmount).toFixed(2)}`"
                         >
                         </div>
                       </div>
@@ -604,7 +608,7 @@ import Layout from "../layouts/Layout.astro"
                         (<span
                           x-text="formatPercentage(allocation.utility, totalUtility)"
                         >
-                        </span>) //<span
+                        </span>) /<span
                           x-text="allocation.utilityPerBuckOfNextQuantity"
                         >
                         </span>
