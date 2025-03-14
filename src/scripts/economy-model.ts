@@ -16,6 +16,16 @@ export interface Category {
   necessityLevel: number
 }
 
+
+export interface Category {
+  name: string
+  price: number
+  // starting utility
+  utilityFactor: number
+  // At what amount of quantity does marginal utility equal 0
+  basicNeedAmount: number
+}
+
 // Calculate the utility for a specific quantity of a category
 export function calculateUtility(category: Category, quantity: number): number {
   // For zero quantity of high-necessity items, return extremely negative utility

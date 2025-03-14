@@ -30,6 +30,7 @@ export class SimpleProportionsAlgorithm implements AllocationAlgorithm {
     
     // TODO: Implement your allocation logic here
     // This is a placeholder implementation that buys one unit of each category
+    let totalSpent = 0
     for (const allocation of allocations) {
       const { category } = allocation
       if (category.price === 0 || category.utilityFactor === 0) {
@@ -38,15 +39,18 @@ export class SimpleProportionsAlgorithm implements AllocationAlgorithm {
         // Purchase one unit
   
         allocation.spent = budget * ( (category.utilityFactor * category.basicNeedAmount) / (category.price) )
+        totalSpent += allocation.spent
         allocation.quantity = allocation.spent / category.price
         allocation.utility = allocation.quantity * category.utilityFactor
-        
+        allocation.utilityPerDollar = allocation.utility / allocation.spent
         totalUtility += allocation.utility
         remainingBudget -= category.price
       }
     }
+
+    const lackingBudget = budget - totalSpent
     
-    const totalSpent = budget - remainingBudget
+    // const totalSpent = budget - remainingBudget
     let message = "This is a scaffold - implement your algorithm logic!"
 
     return {

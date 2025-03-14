@@ -7,6 +7,8 @@ import { MarginalUtilityAlgorithm } from "./marginal-utility-algorithm"
 import { OptimisedMarginalUtilityAlgorithm } from "./marginal-utility-algorithm-optimisation"
 import { OptimisedMarginalUtilityBudgetFixAlgorithm } from "./optimised-marginal-utility-budget-fix-algorithm"
 import { SimpleProportionsAlgorithm } from "./simple-proportions-algorithm"
+import { MarginalUtilityOptimizer } from "./gradient-descent-algorithm"
+import { PairProgrammingAlgorithm } from "./pair-programming-algorithm"
 // Create instances of all algorithms
 const algorithms: AllocationAlgorithm[] = [
   new PriorityNecessityAlgorithm(),
@@ -16,6 +18,8 @@ const algorithms: AllocationAlgorithm[] = [
   new MarginalUtilityAlgorithm(),
   new OptimisedMarginalUtilityAlgorithm(),  new OptimisedMarginalUtilityBudgetFixAlgorithm(),
   new SimpleProportionsAlgorithm(),
+  new MarginalUtilityOptimizer(),
+  new PairProgrammingAlgorithm(),
 
 ]
 

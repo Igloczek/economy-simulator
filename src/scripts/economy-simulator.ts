@@ -1,5 +1,5 @@
 import { registerComponent } from "@/scripts/alpine.ts"
-import algorithms, { type AllocationAlgorithm } from "@/scripts/algorithms"
+import algorithms, { type AllocationAlgorithm, type AllocationResult } from "@/scripts/algorithms"
 import { kowalski } from './scenarios/kowalski'
 registerComponent("app", {
   budget: 1000,
@@ -271,14 +271,35 @@ registerComponent("app", {
 
     const DAYS_IN_MONTH = 30
     const dailyBudget = Number(this.budget / DAYS_IN_MONTH)
+    let lastResult: AllocationResult | null = null
+
+    let steps = algorithm.name === 'gradient-descent' ? 10 : 1
     // Run the selected algorithm
-    const result = algorithm.calculate(processedCategories, dailyBudget)
-
-    this.allocations = result.allocations
-    this.totalUtility = result.totalUtility
-    this.totalSpent = result.totalSpent
-    this.optimizationMessage = result.message || ""
-
+    // const inerval = setInterval(() => {
+    //   steps--
+    //   lastResult = algorithm.calculate(lastResult?.allocations ?? processedCategories, dailyBudget) as AllocationResult
+    //   lastResult.allocations = lastResult.allocations.map(a => {
+    //     // if (a.category.category) {
+    //     //   return a.category
+    //     // }
+    //     return a
+    //   })
+    //   this.allocations = lastResult.allocations
+    //   this.totalUtility = lastResult.totalUtility
+    //   this.totalSpent = lastResult.totalSpent
+    //   this.optimizationMessage = lastResult.message || ""
+  
+    //   this.updateChart()
+    //   if (steps <= 0) {
+    //     clearInterval(inerval)
+    //   }
+    // }, 2000)
+    lastResult = algorithm.calculate(lastResult?.allocations ?? processedCategories, dailyBudget) as AllocationResult
+    console.log('result', lastResult)
+    this.allocations = lastResult.allocations
+    this.totalUtility = lastResult.totalUtility
+    this.totalSpent = lastResult.totalSpent
+    this.optimizationMessage = lastResult.message || ""
     this.updateChart()
   },
 

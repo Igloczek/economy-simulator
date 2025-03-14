@@ -410,7 +410,7 @@ import Layout from "../layouts/Layout.astro"
                 </span>
                 <span
                   x-show="category.unit === 'cm2'"
-                  x-text="`(${category.basicNeedAmount / 1000}m2)`"
+                  x-text="`(${category.basicNeedAmount / 10_000}m2)`"
                 >
                 </span>
                 <span
@@ -581,6 +581,7 @@ import Layout from "../layouts/Layout.astro"
                         >
                         </span>)
                         //<span x-text="allocation.utilityPerBuckOfNextQuantity"></span>
+                        Utility per spent: <span x-text="allocation.utilityPerDollar"></span>
                       </span>
                     </td>
                   </tr>
